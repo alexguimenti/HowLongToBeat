@@ -1,11 +1,11 @@
-# GameDataCSVExporter
+# HowLongToBeat
 
 <h1 align="center">
 <br>
-  <img src="https://example.com/game-logo.png" alt="Game Data Exporter" width="120">
+  <img src="https://cdn6.aptoide.com/imgs/2/f/9/2f90e2d8e2eee0e3acb085b2e1fe6c71_icon.png" alt="Game Data Exporter" width="120">
 <br>
 <br>
-GameDataCSVExporter
+HowLongToBeat
 </h1>
 
 <p align="center">This script allows the user to export game data to a CSV file.</p>
