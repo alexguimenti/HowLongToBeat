@@ -57,7 +57,7 @@ Constraints:
         return completion.choices[0].message.content.strip()
     except Exception as e:
         print(f"\nError fetching genre for {game_name}: {e}")
-        return ""
+        return "Unknown"
 
 async def process_games(input_file, output_file):
     games = []
@@ -76,34 +76,39 @@ async def process_games(input_file, output_file):
 
     # 2. Process each game
     for index, game in enumerate(games, start=1):
+        # Initialize default values if empty
+        for field in ["Year", "Genre", "Time to Beat", "Score", "Platform"]:
+            if not game.get(field) or game[field].strip() == "":
+                game[field] = "Unknown"
+
         game_name = game["Game"]
-        platform = game.get("Platform", "Unknown")
+        platform = game["Platform"]
         print(f"[{index}/{total_games}] Processing: {game_name}...", end=" ", flush=True)
         
         # Parallelize HLTB and OpenAI calls for efficiency
+        # Only fetch genre if it's currently "Unknown"
         hltb_task = hltb.async_search(game_name)
-        genre_task = get_genre(game_name, platform) if not game.get("Genre") else asyncio.sleep(0, game["Genre"])
+        genre_task = get_genre(game_name, platform) if game["Genre"] == "Unknown" else asyncio.sleep(0, game["Genre"])
         
         try:
             results_list, genre = await asyncio.gather(hltb_task, genre_task)
             
             # Update Genre
-            if genre:
-                game["Genre"] = genre
+            game["Genre"] = genre if genre else "Unknown"
 
             # Update HLTB data
             if results_list and len(results_list) > 0:
                 best_element = max(results_list, key=lambda element: element.similarity)
                 
                 if best_element.similarity > 0.90:
-                    game["Score"] = best_element.review_score
-                    game["Year"] = best_element.release_world
-                    game["Time to Beat"] = best_element.main_story
-                    print(f"Found! (Similarity: {best_element.similarity:.2f} | Genre: {genre})")
+                    game["Score"] = str(best_element.review_score) if best_element.review_score else "Unknown"
+                    game["Year"] = str(best_element.release_world) if best_element.release_world else "Unknown"
+                    game["Time to Beat"] = str(best_element.main_story) if best_element.main_story else "Unknown"
+                    print(f"Found! (Similarity: {best_element.similarity:.2f} | Genre: {game['Genre']})")
                 else:
-                    print(f"Skipped HLTB (Low similarity: {best_element.similarity:.2f} | Genre: {genre})")
+                    print(f"Skipped HLTB (Low similarity: {best_element.similarity:.2f} | Genre: {game['Genre']})")
             else:
-                print(f"HLTB Not found (Genre: {genre})")
+                print(f"HLTB Not found (Genre: {game['Genre']})")
                 
         except Exception as e:
             print(f"Error processing {game_name}: {e}")

@@ -18,7 +18,8 @@ HowLongToBeat Data Enricher
 - 🧾 **CSV Read/Write** - Data handling
 - ⚙️ **Asyncio** - Efficient parallel API calls (HLTB + OpenAI)
 - 🌐 **HowLongToBeat API** - Fetch completion times and scores
-- 🤖 **OpenAI API** - Automatic genre classification
+- 🤖 **OpenAI API** - Automatic genre classification based on a curated list
+- 🛡️ **Data Validation** - Automatically fills missing information with `"Unknown"`
 
 ## Getting Started
 
@@ -48,16 +49,17 @@ HowLongToBeat Data Enricher
 
 3. The script will:
     - Search for the best match on HowLongToBeat (requiring >90% similarity).
-    - Use OpenAI to determine the best-fitting genre from a predefined list.
+    - Use OpenAI to determine the best-fitting genre from a predefined list (Action, RPG, Metroidvania, etc.).
+    - Fill any missing fields (Year, Genre, Time, Score, Platform) with `"Unknown"`.
 4. An updated file named `games_updated.csv` will be created with the fetched data.
 
 <hr />
 
 ## Important
 
-- **Similarity**: The script uses a similarity threshold of 0.90 for HLTB to ensure data accuracy.
-- **API Costs**: Genres are processed via OpenAI. Ensure your API key is valid and has credits.
-- **Predefined Genres**: OpenAI is constrained to a specific list of genres (e.g., Action, RPG, Metroidvania, etc.) to keep your database consistent.
+- **Data Integrity**: If a game is not found or the HLTB similarity is low, the script preserves existing data or marks it as `"Unknown"`.
+- **OpenAI Constraints**: Genre classification is restricted to a specific list of 22 genres to ensure database consistency.
+- **Async Execution**: Both APIs are called simultaneously to significantly reduce processing time.
 
 <hr />
 
@@ -65,12 +67,12 @@ HowLongToBeat Data Enricher
 
 The script expects and produces CSV files with the following columns:
 
-- **Game**: The title of the game (used for searching).
+- **Game**: The title of the game (primary search key).
 - **Platform**: The gaming platform (helps OpenAI classification).
-- **Year**: Release year (updated by HLTB).
-- **Genre**: Game genre (updated by OpenAI).
-- **Time to Beat**: Average time to complete the main story (updated by HLTB).
-- **Score**: HowLongToBeat review score (updated by HLTB).
+- **Year**: Release year (fetched from HLTB).
+- **Genre**: Game genre (classified by OpenAI).
+- **Time to Beat**: Average time to complete the main story (fetched from HLTB).
+- **Score**: HowLongToBeat community review score (fetched from HLTB).
 - **Status**: Your personal status (e.g., Backlog, Beaten).
 
-You can open the resulting `games_updated.csv` with Excel, Google Sheets, or any text editor.
+You can open the resulting `games_updated.csv` with Excel, Google Sheets, or any spreadsheet software.
