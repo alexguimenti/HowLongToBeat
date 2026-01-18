@@ -18,6 +18,9 @@ class Config:
     MAX_CONCURRENT_GAMES = 5
     GENRE_BATCH_SIZE = 20  # Number of games to send to LLM in one request
     SIMILARITY_THRESHOLD = 0.90
+    # gpt-4o-mini pricing per 1M tokens (as of early 2024)
+    PRICE_PROMPT_1M = 0.15
+    PRICE_COMPLETION_1M = 0.60
     GENRES_ALLOWED = [
         "Action", "Action Adventure", "Action Platformer", "Action RPG", "Adventure",
         "Beat 'em up", "Fighting", "Metroidvania", "Mini-game", "Pinball", "Platformer",
@@ -54,6 +57,20 @@ class GameEnricher:
         self.openai = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         self.semaphore = asyncio.Semaphore(Config.MAX_CONCURRENT_GAMES)
         self.genre_cache: Dict[str, str] = {}
+        self.total_prompt_tokens = 0
+        self.total_completion_tokens = 0
+
+    def get_cost_summary(self) -> str:
+        """Returns a formatted string with token usage and estimated cost."""
+        cost = (self.total_prompt_tokens * Config.PRICE_PROMPT_1M / 1_000_000) + \
+               (self.total_completion_tokens * Config.PRICE_COMPLETION_1M / 1_000_000)
+        return (
+            f"\n--- OpenAI Cost Summary ---\n"
+            f"Prompt Tokens: {self.total_prompt_tokens}\n"
+            f"Completion Tokens: {self.total_completion_tokens}\n"
+            f"Total Tokens: {self.total_prompt_tokens + self.total_completion_tokens}\n"
+            f"Estimated Cost: ${cost:.6f}"
+        )
 
     async def fetch_genres_batch(self, games_to_process: List[Dict]):
         """Fetches genres for a list of games in batches to save tokens."""
@@ -90,7 +107,10 @@ If you don't know, use 'Unknown'. No filler text.
                 
                 responses = completion.choices[0].message.content.strip().split("\n")
                 
-                # Simple parsing to match response back to games
+                # Track usage
+                if completion.usage:
+                    self.total_prompt_tokens += completion.usage.prompt_tokens
+                    self.total_completion_tokens += completion.usage.completion_tokens
                 for line in responses:
                     if ":" in line:
                         parts = line.split(":", 1)
@@ -205,7 +225,10 @@ async def main():
     ]
     await asyncio.gather(*tasks)
 
-    # 7. Save results
+    # 7. Print OpenAI Usage Summary
+    print(enricher.get_cost_summary())
+
+    # 8. Save results
     fieldnames = ["Game", "Platform", "Year", "Genre", "Game Id", "Time to Beat", "Score", "Status"]
     try:
         with open(Config.OUTPUT_CSV, mode='w', newline='', encoding='utf-8') as f:
