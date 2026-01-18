@@ -1,6 +1,7 @@
 import asyncio
 import csv
 import os
+import json
 from typing import List, Dict, Set, Tuple, Optional, Any
 from dotenv import load_dotenv
 from howlongtobeatpy import HowLongToBeat
@@ -14,6 +15,7 @@ class Config:
     OVERWRITE_INPUT = True
     INPUT_CSV = "games.csv"
     OUTPUT_CSV = INPUT_CSV if OVERWRITE_INPUT else "games_updated.csv"
+    CACHE_FILE = "genre_cache.json"
     MAX_GAMES_TO_PROCESS = 20
     MAX_CONCURRENT_GAMES = 5
     GENRE_BATCH_SIZE = 20  # Number of games to send to LLM in one request
@@ -56,9 +58,27 @@ class GameEnricher:
         self.hltb = HowLongToBeat()
         self.openai = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         self.semaphore = asyncio.Semaphore(Config.MAX_CONCURRENT_GAMES)
-        self.genre_cache: Dict[str, str] = {}
         self.total_prompt_tokens = 0
         self.total_completion_tokens = 0
+        self.genre_cache = self._load_cache()
+
+    def _load_cache(self) -> Dict[str, str]:
+        """Loads the genre cache from a local JSON file."""
+        if os.path.exists(Config.CACHE_FILE):
+            try:
+                with open(Config.CACHE_FILE, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+            except Exception as e:
+                print(f"Cache Load Warning: {e}")
+        return {}
+
+    def _save_cache(self):
+        """Saves the current genre cache to a local JSON file."""
+        try:
+            with open(Config.CACHE_FILE, 'w', encoding='utf-8') as f:
+                json.dump(self.genre_cache, f, indent=2)
+        except Exception as e:
+            print(f"Cache Save Error: {e}")
 
     def get_cost_summary(self) -> str:
         """Returns a formatted string with token usage and estimated cost."""
@@ -101,35 +121,38 @@ class GameEnricher:
                 print(f"Token optimization: Fetching genres for a batch of {len(batch)} games...")
                 completion = await self.openai.chat.completions.create(
                     model="gpt-4o-mini",
+                    response_format={"type": "json_object"},
                     messages=[
                         {"role": "system", "content": f"""
-You are a video game database expert. Classify each game in the list into ONE genre from: {', '.join(Config.GENRES_ALLOWED)}.
-Return exactly one line per game in the format 'Game Name: Genre'. 
-If you don't know, use 'Unknown'. No filler text.
+You are a video game database expert. Classify the provided games into ONE genre from: {', '.join(Config.GENRES_ALLOWED)}.
+Respond ONLY with a JSON object where the keys are the EXACT game names provided and the values are their genres.
+Example: {{"Game Name": "Action", "Another Game": "RPG"}}
                         """},
-                        {"role": "user", "content": f"Classify these games:\n{batch_str}"}
+                        {"role": "user", "content": f"Classify these games: {', '.join([g['Game'] for g in batch])}"}
                     ]
                 )
                 
-                responses = completion.choices[0].message.content.strip().split("\n")
+                # Parse JSON response
+                result_json = json.loads(completion.choices[0].message.content)
                 
                 # Track usage
                 if completion.usage:
                     self.total_prompt_tokens += completion.usage.prompt_tokens
                     self.total_completion_tokens += completion.usage.completion_tokens
-                for line in responses:
-                    if ":" in line:
-                        parts = line.split(":", 1)
-                        # Remove marker "-" if present
-                        game_ref = parts[0].strip().lstrip("- ").lower()
-                        genre_result = parts[1].strip()
-                        if genre_result in Config.GENRES_ALLOWED:
-                            self.genre_cache[game_ref] = genre_result
 
-                # Apply results to batch
+                # Update cache and local games
+                for game_name, genre in result_json.items():
+                    if genre in Config.GENRES_ALLOWED:
+                        self.genre_cache[game_name.lower().strip()] = genre
+
+                # Apply results from cache back to games
                 for g in batch:
                     key = g["Game"].lower().strip()
-                    g["Genre"] = self.genre_cache.get(key, "Unknown")
+                    if key in self.genre_cache:
+                        g["Genre"] = self.genre_cache[key]
+
+                # Save cache after each successful batch
+                self._save_cache()
 
             except Exception as e:
                 print(f"Batch Processing Error: {e}")
