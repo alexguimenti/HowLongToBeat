@@ -17,7 +17,7 @@ class Config:
     MAX_GAMES_TO_PROCESS = 50
     MAX_CONCURRENT_GAMES = 5
     GENRE_BATCH_SIZE = 20  # Number of games to send to LLM in one request
-    SIMILARITY_THRESHOLD = 0.90
+    SIMILARITY_THRESHOLD = 0.85
     # gpt-4o-mini pricing per 1M tokens (as of early 2024)
     PRICE_PROMPT_1M = 0.15
     PRICE_COMPLETION_1M = 0.60
