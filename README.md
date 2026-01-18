@@ -2,7 +2,7 @@
 
 <h1 align="center">
 <br>
-  <img src="https://cdn6.aptoide.com/imgs/2/f/9/2f90e2d8e2eee0e3acb085b2e1fe6c71_icon.png" alt="Game Data Exporter" width="120">
+  <img src="https://cdn6.aptoide.com/imgs/2/f/9/2f90e2d8e2eee0e3acb085b2e1fe6c71_icon.png" alt="HowLongToBeat Data Enricher" width="120">
 <br>
 <br>
 HowLongToBeat Data Enricher
@@ -15,11 +15,11 @@ HowLongToBeat Data Enricher
 ## Features
 
 - 🐍 **Python** - Core logic
-- 🧾 **CSV Read/Write** - Data handling
-- ⚙️ **Asyncio** - Efficient parallel API calls (HLTB + OpenAI)
-- 🌐 **HowLongToBeat API** - Fetch completion times and scores
+- 🧾 **CSV Read/Write** - Data handling with skip-logic for already filled rows
+- ⚙️ **Asyncio** - Efficient parallel API calls (HLTB + OpenAI) with semaphore control
+- 🌐 **HowLongToBeat API** - Fetch completion times, scores, and Game IDs
 - 🤖 **OpenAI API** - Automatic genre classification based on a curated list
-- 🛡️ **Data Validation** - Automatically fills missing information with `"Unknown"`
+- 🛡️ **Data Validation** - Automatically fills missing information with `"Unknown"` and normalizes times
 
 ## Getting Started
 
@@ -34,12 +34,20 @@ HowLongToBeat Data Enricher
     ```
 4. Prepare a `games.csv` file in the same directory with at least a `Game` column.
 
+## Configuration
+
+You can customize the script behavior at the top of `script.py`:
+
+- `OVERWRITE_INPUT`: Set to `True` to update `games.csv` directly, or `False` to create `games_updated.csv`.
+- `MAX_GAMES_TO_PROCESS`: Limit how many games are processed per run (default: 10). Set to `None` to process everything.
+- `MAX_CONCURRENT_GAMES`: Number of games processed in parallel (default: 5).
+
 ## Usage
 
 1. Place your games list in `games.csv`. The file should follow this structure:
     ```csv
-    Game,Platform,Year,Genre,Time to Beat,Score,Status
-    ActRaiser,SNES,,,,,Backlog
+    Game,Platform,Year,Genre,Game Id,Time to Beat,Score,Status
+    ActRaiser,SNES,,,,,,Backlog
     ```
 
 2. Run the script:
@@ -48,10 +56,11 @@ HowLongToBeat Data Enricher
     ```
 
 3. The script will:
+    - Skip games that already have all data fields filled.
     - Search for the best match on HowLongToBeat (requiring >90% similarity).
-    - Use OpenAI to determine the best-fitting genre from a predefined list (Action, RPG, Metroidvania, etc.).
-    - Fill any missing fields (Year, Genre, Time, Score, Platform) with `"Unknown"`.
-4. An updated file named `games_updated.csv` will be created with the fetched data.
+    - Use OpenAI to determine the best-fitting genre from a predefined list.
+    - Round the **Time to Beat** to the nearest **0.25** increment (e.g., 3.50, 4.25).
+    - Fill any missing fields with `"Unknown"`.
 
 <hr />
 
@@ -59,7 +68,7 @@ HowLongToBeat Data Enricher
 
 - **Data Integrity**: If a game is not found or the HLTB similarity is low, the script preserves existing data or marks it as `"Unknown"`.
 - **OpenAI Constraints**: Genre classification is restricted to a specific list of 22 genres to ensure database consistency.
-- **Async Execution**: Both APIs are called simultaneously to significantly reduce processing time.
+- **Async Execution**: Both APIs are called simultaneously. The script uses a semaphore to process multiple games at once without hitting rate limits.
 
 <hr />
 
@@ -71,8 +80,9 @@ The script expects and produces CSV files with the following columns:
 - **Platform**: The gaming platform (helps OpenAI classification).
 - **Year**: Release year (fetched from HLTB).
 - **Genre**: Game genre (classified by OpenAI).
-- **Time to Beat**: Average time to complete the main story (fetched from HLTB).
-- **Score**: HowLongToBeat community review score (fetched from HLTB).
+- **Game Id**: The unique ID from HowLongToBeat (fetched from HLTB).
+- **Time to Beat**: Average time to complete the main story, rounded to 0.25 increments.
+- **Score**: HowLongToBeat community review score.
 - **Status**: Your personal status (e.g., Backlog, Beaten).
 
-You can open the resulting `games_updated.csv` with Excel, Google Sheets, or any spreadsheet software.
+You can open the resulting files with Excel, Google Sheets, or any spreadsheet software.

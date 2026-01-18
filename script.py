@@ -74,7 +74,7 @@ async def process_single_game(game, index, total_games):
     """Processes a single game instance with concurrency control."""
     async with semaphore:
         # Initialize default values if empty or normalize existing
-        for field in ["Year", "Genre", "Time to Beat", "Score", "Platform"]:
+        for field in ["Year", "Genre", "Game Id", "Time to Beat", "Score", "Platform"]:
             val = str(game.get(field, "")).strip()
             if not val or val in ["", "Unknown", "None"]:
                 game[field] = "Unknown"
@@ -91,7 +91,7 @@ async def process_single_game(game, index, total_games):
         platform = game["Platform"]
         
         # Determine if we actually need to fetch data from APIs
-        needs_hltb = any(game[f] == "Unknown" for f in ["Year", "Time to Beat", "Score"])
+        needs_hltb = any(game[f] == "Unknown" for f in ["Year", "Game Id", "Time to Beat", "Score"])
         needs_genre = game["Genre"] == "Unknown"
 
         if not needs_hltb and not needs_genre:
@@ -113,6 +113,7 @@ async def process_single_game(game, index, total_games):
                     if best_element.similarity > 0.90:
                         game["Score"] = str(best_element.review_score) if best_element.review_score else "Unknown"
                         game["Year"] = str(best_element.release_world) if best_element.release_world else "Unknown"
+                        game["Game Id"] = str(best_element.game_id) if best_element.game_id else "Unknown"
                         
                         # Round fetched Time to Beat to the nearest 0.25
                         if best_element.main_story:
@@ -153,7 +154,7 @@ async def process_games(input_file, output_file):
         # Check if any important field is missing or marked as Unknown/empty
         is_missing_data = any(
             not game.get(f) or game[f].strip() in ["", "Unknown", "None"] 
-            for f in ["Year", "Genre", "Time to Beat", "Score"]
+            for f in ["Year", "Genre", "Game Id", "Time to Beat", "Score"]
         )
         if is_missing_data:
             games_to_process.append(game)
@@ -176,7 +177,7 @@ async def process_games(input_file, output_file):
     await asyncio.gather(*tasks)
 
     # 6. Save results (all_games contains both the updated and the skipped ones)
-    fieldnames = ["Game", "Platform", "Year", "Genre", "Time to Beat", "Score", "Status"]
+    fieldnames = ["Game", "Platform", "Year", "Genre", "Game Id", "Time to Beat", "Score", "Status"]
     try:
         with open(output_file, mode='w', newline='', encoding='utf-8') as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
