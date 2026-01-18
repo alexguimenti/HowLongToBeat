@@ -2,92 +2,62 @@ import asyncio
 import csv
 from howlongtobeatpy import HowLongToBeat
 
-# O usuário deve inserir sua lista de jogos aqui
-games_data = {
-    "Games": [
-        # Exemplo de jogos, o usuário pode adicionar ou editar conforme necessário
-        {
-            "Game Title": "Daze Before Christmas",
-            "Platform": "SNES",
-            "Year": 1994,
-            "Genre": "Platform"
-        },
-        {
-            "Game Title": "Alisia Dragoon",
-            "Platform": "Mega Drive",
-            "Year": 1992,
-            "Genre": "Action"
-        },
-        {
-            "Game Title": "Growl",
-            "Platform": "Mega Drive",
-            "Year": 1991,
-            "Genre": "Beat 'em up"
-        },
-        {
-            "Game Title": "Thrill Kill",
-            "Platform": "PS1",
-            "Year": 1998,
-            "Genre": "Fighting"
-        },
-        {
-            "Game Title": "Hogs of War",
-            "Platform": "PS1",
-            "Year": 2000,
-            "Genre": "Strategy"
-        },
-        {
-            "Game Title": "Brave Fencer Musashi",
-            "Platform": "PS1",
-            "Year": 1998,
-            "Genre": "Action RPG"
-        },
-        {
-            "Game Title": "Deception III: Dark Delusion",
-            "Platform": "PS1",
-            "Year": 1999,
-            "Genre": "Strategy"
-        },
-        {
-            "Game Title": "The Misadventures of Tron Bonne",
-            "Platform": "PS1",
-            "Year": 1999,
-            "Genre": "Action"
-        }
-    ]
-}
+async def process_games(input_file, output_file):
+    games = []
+    
+    # 1. Ler o arquivo CSV
+    try:
+        with open(input_file, mode='r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            games = list(reader)
+    except FileNotFoundError:
+        print(f"Erro: O arquivo '{input_file}' não foi encontrado.")
+        return
 
-async def add_game_ids(games_data):
-    total_games = len(games_data["Games"])
-    for index, game in enumerate(games_data["Games"], start=1):
-        game_title = game["Game Title"]
-        # Realiza a busca assíncrona
-        results_list = await HowLongToBeat().async_search(game_title)
-        if results_list is not None and len(results_list) > 0:
-            # Pega o elemento com maior similaridade
-            best_element = max(results_list, key=lambda element: element.similarity)
-            # Adiciona o game_id e main_story ao objeto do jogo
-            game["Game ID"] = best_element.game_id
-            game["Main Story"] = best_element.main_story
-        # Imprime o progresso
-        print(f"Processed {index}/{total_games} games")
+    total_games = len(games)
+    hltb = HowLongToBeat()
 
-# Executa a função assíncrona
-asyncio.run(add_game_ids(games_data))
+    print(f"Iniciando processamento de {total_games} jogos...")
 
-# Transforma a lista de objetos em um CSV
-csv_file = "games_data.csv"
-csv_columns = ["Game Title", "Platform", "Year", "Genre", "Game ID", "Main Story"]
+    # 2. Processar cada jogo
+    for index, game in enumerate(games, start=1):
+        game_name = game["Game"]
+        print(f"[{index}/{total_games}] Procurando: {game_name}...", end=" ", flush=True)
+        
+        try:
+            results_list = await hltb.async_search(game_name)
+            
+            if results_list and len(results_list) > 0:
+                # Pega o elemento com maior similaridade
+                best_element = max(results_list, key=lambda element: element.similarity)
+                
+                # Valida se a similaridade é maior que 0.90
+                if best_element.similarity > 0.90:
+                    game["Score"] = best_element.review_score
+                    game["Year"] = best_element.release_world
+                    game["Time to Beat"] = best_element.main_story
+                    print(f"Encontrado! (Sim: {best_element.similarity:.2f})")
+                else:
+                    print(f"Pulado (Similaridade baixa: {best_element.similarity:.2f})")
+            else:
+                print("Não encontrado")
+                
+        except Exception as e:
+            print(f"Erro ao buscar: {e}")
 
-try:
-    with open(csv_file, mode='w', newline='', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames=csv_columns)
-        writer.writeheader()
-        for game in games_data["Games"]:
-            writer.writerow(game)
-    print(f"CSV file '{csv_file}' created successfully.")
-except IOError:
-    print("I/O error")
+    # 3. Salvar o resultado no novo CSV
+    fieldnames = ["Game", "Platform", "Year", "Genre", "Time to Beat", "Score", "Status"]
+    try:
+        with open(output_file, mode='w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(games)
+        print(f"\nSucesso! Arquivo '{output_file}' criado com os dados atualizados.")
+    except IOError:
+        print("\nErro: Não foi possível salvar o arquivo CSV.")
 
-# Verifica o resultado
-print(games_data)
+if __name__ == "__main__":
+    INPUT_CSV = "games.csv"
+    OUTPUT_CSV = "games_updated.csv"
+    
+    asyncio.run(process_games(INPUT_CSV, OUTPUT_CSV))
