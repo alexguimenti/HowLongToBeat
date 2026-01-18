@@ -1,40 +1,40 @@
 Game,Platform,Year,Genre,Game Id,Time to Beat,Score,Status
-1944: The Loop Master,Arcade,,,,,70,Backlog
-8 Legs to Love,Pico 8,,,,,-1,Backlog
-A Plumber for All Seasons,Pico 8,,,,,,Backlog
-Action Fighter,Master System,,,,,63,Backlog
-ActRaiser,SNES,,,,,78,Backlog
-Advance Wars,Game Boy Advance,,,,,,Backlog
-Adventure Island IV,NES,,,,,,Backlog
-Adventure of Little Ralph,PlayStation,,,,,,Backlog
-Adventures of Yogi Bear,SNES,,,,,50,Beaten
-Aero Fighters,SNES,,,,,69,Beaten
-Aero Fighters 2,Neo Geo,,,,,70,Backlog
-Aero Fighters 3,Neo Geo,,,,,69,Backlog
-After Burner,NES,,,,,57,Backlog
-After Burner,Master System,,,,,57,Backlog
-Air Rescue,Master System,,,,,63,Beaten
-Akira: Psycho Ball,PS2,,,,,-1,Backlog
-Alcahest,SNES,,,,,,Backlog
-Aleste,MSX,,,,,68,Backlog
-Alex Kidd in Miracle World,NES,,,,,65,Backlog
-Alex Kidd in Miracle World,Master System,,,,,65,Backlog
-Alex Kidd In Shinobi World,Master System,,,,,68,Backlog
-Alien 3,SNES,,,,,,
-Alien Hominid,Game Boy Advance,,,,,,
-Alien Soldier,Mega Drive,,,,,77,Backlog
-Alisia Dragoon,Mega Drive,,,,,65,Backlog
-Alone in the Dark,Game Boy Color,,,,,69,Backlog
-Alpine Alpaca,Pico 8,,,,,-1,Backlog
-Alundra,PlayStation,,,,,,Backlog
-An Autumn With You,Game Boy Color,,,,,70,Backlog
-Animaniacs,SNES,,,,,63,Backlog
-Ape Escape,PS1,,,,,76,Backlog
-Ape Escape 2,PS2,,,,,78,Backlog
-Apotris,Pico 8,,,,,,Backlog
-Apotris GBA,Other,,,,,,Backlog
-Ardy Light Foot,SNES,,,,,65,Backlog
-Aria of Sorrow,Game Boy Advance,,,,,,Backlog
+1944: The Loop Master,Arcade,2000,Unknown,57,0.75,69,Backlog
+8 Legs to Love,Pico 8,Unknown,Mini-game,Unknown,Unknown,-1,Backlog
+A Plumber for All Seasons,Pico 8,Unknown,Puzzle Platformer,Unknown,Unknown,Unknown,Backlog
+Action Fighter,Master System,1986,Action,188,1.25,63,Backlog
+ActRaiser,SNES,1990,Action Adventure,191,5.00,78,Backlog
+Advance Wars,Game Boy Advance,2001,Strategy,204,15.50,80,Backlog
+Adventure Island IV,NES,1994,Platformer,15909,2.00,77,Backlog
+Adventure of Little Ralph,PlayStation,1999,Action Adventure,27083,2.50,72,Backlog
+Adventures of Yogi Bear,SNES,1994,Adventure,31230,2.00,54,Beaten
+Aero Fighters,SNES,1992,Shooter,236,0.75,70,Beaten
+Aero Fighters 2,Neo Geo,1994,Shooter,237,0.75,69,Backlog
+Aero Fighters 3,Neo Geo,1995,Shooter,238,0.75,68,Backlog
+After Burner,NES,1987,Shooter,252,0.75,55,Backlog
+After Burner,Master System,1987,Shooter,252,0.75,55,Backlog
+Air Rescue,Master System,1992,Action,73050,0.50,63,Beaten
+Akira: Psycho Ball,PS2,Unknown,Unknown,Unknown,Unknown,-1,Backlog
+Alcahest,SNES,1993,Action RPG,325,5.25,67,Backlog
+Aleste,MSX,1988,Shoot 'em up,17707,0.75,64,Backlog
+Alex Kidd in Miracle World,NES,1986,Platformer,329,2.00,65,Backlog
+Alex Kidd in Miracle World,Master System,1986,Platformer,329,2.00,65,Backlog
+Alex Kidd In Shinobi World,Master System,1990,Action Platformer,330,0.75,69,Backlog
+Alien 3,SNES,1992,Action,343,3.25,60,
+Alien Hominid,Game Boy Advance,2004,Run and Gun,354,2.25,71,
+Alien Soldier,Mega Drive,1995,Action,365,3.00,77,Backlog
+Alisia Dragoon,Mega Drive,1992,Action RPG,384,2.00,65,Backlog
+Alone in the Dark,Game Boy Color,2024,Survival Horror,112498,7.75,69,Backlog
+Alpine Alpaca,Pico 8,Unknown,Mini-game,Unknown,Unknown,-1,Backlog
+Alundra,PlayStation,1997,Action Adventure,414,30.25,76,Backlog
+An Autumn With You,Game Boy Color,2020,Visual Novel,161878,Unknown,Unknown,Backlog
+Animaniacs,SNES,1994,Platformer,478,2.00,64,Backlog
+Ape Escape,PS1,1999,Action Adventure,518,7.00,75,Backlog
+Ape Escape 2,PS2,2001,Action Adventure,519,7.75,77,Backlog
+Apotris,Pico 8,Unknown,Puzzle,Unknown,Unknown,Unknown,Backlog
+Apotris GBA,Other,Unknown,Puzzle,Unknown,Unknown,Unknown,Backlog
+Ardy Light Foot,SNES,1994,Platformer,16595,2.00,66,Backlog
+Aria of Sorrow,Game Boy Advance,Unknown,Metroidvania,Unknown,Unknown,Unknown,Backlog
 Armored Core,PlayStation,,,,,,Backlog
 Armored Warriors,Arcade,,,,,75,Backlog
 Ascent,Pico 8,,,,,70,Backlog

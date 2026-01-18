@@ -42,9 +42,9 @@ def round_to_quarter(value: Optional[str]) -> str:
         return "Unknown"
 
 def normalize_field(val: Any) -> str:
-    """Normalizes empty, null or 'nan' fields to 'Unknown'."""
+    """Normalizes empty, null, 'nan' or 'unknown' fields to 'Unknown'."""
     clean_val = str(val or "").strip()
-    if clean_val.lower() in ["", "none", "nan", "null"]:
+    if clean_val.lower() in ["", "none", "nan", "null", "unknown"]:
         return "Unknown"
     return clean_val
 
@@ -74,9 +74,15 @@ class GameEnricher:
 
     async def fetch_genres_batch(self, games_to_process: List[Dict]):
         """Fetches genres for a list of games in batches to save tokens."""
+        # Only process games where Genre is actually empty (not 'Unknown')
+        target_games = [g for g in games_to_process if not g.get("Genre") or g["Genre"].strip() == ""]
+        
+        if not target_games:
+            return
+
         # 1. Check cache first
         remaining_games = []
-        for g in games_to_process:
+        for g in target_games:
             cache_key = g["Game"].lower().strip()
             if cache_key in self.genre_cache:
                 g["Genre"] = self.genre_cache[cache_key]
@@ -138,8 +144,11 @@ If you don't know, use 'Unknown'. No filler text.
             if "pico 8" in platform:
                 return
 
-            # Check if we really need HLTB (other fields besides Genre)
-            needs_hltb = any(game[f] == "Unknown" for f in ["Year", "Game Id", "Time to Beat", "Score"])
+            # Check if we really need HLTB (only if fields are EMPTY, not "Unknown")
+            needs_hltb = any(
+                not game.get(f) or str(game.get(f)).strip() == "" 
+                for f in ["Year", "Game Id", "Time to Beat", "Score"]
+            )
 
             if not needs_hltb:
                 return
@@ -196,10 +205,10 @@ async def main():
         print(f"Critical Error: File '{Config.INPUT_CSV}' not found.")
         return
 
-    # 2. Identify games needing updates (without modifying all_games yet)
+    # 2. Identify games needing updates (ONLY if fields are TRULY empty)
     to_process = [
         game for game in all_games if any(
-            normalize_field(game.get(f)) == "Unknown" 
+            not game.get(f) or str(game.get(f)).strip() == "" 
             for f in ["Year", "Genre", "Game Id", "Time to Beat", "Score"]
         )
     ]
@@ -213,17 +222,21 @@ async def main():
 
     print(f"Status: Processing {len(queue)} games...")
 
-    # 5. STEP ONE: Fetch Genres in Batch (Saves a lot of tokens)
-    needing_genre = [g for g in queue if g["Genre"] == "Unknown"]
-    if needing_genre:
-        await enricher.fetch_genres_batch(needing_genre)
+    # 4. STEP ONE: Fetch Genres in Batch (Saves a lot of tokens)
+    await enricher.fetch_genres_batch(queue)
 
-    # 6. STEP TWO: Fetch HLTB data concurrently
+    # 5. STEP TWO: Fetch HLTB data concurrently
     tasks = [
         enricher.process_hltb_only(game, i, len(queue)) 
         for i, game in enumerate(queue, start=1)
     ]
     await asyncio.gather(*tasks)
+
+    # 6. Post-process the queue: Normalize remaining empties and round times
+    for game in queue:
+        for field in ["Year", "Genre", "Game Id", "Time to Beat", "Score", "Platform"]:
+            game[field] = normalize_field(game.get(field))
+        game["Time to Beat"] = round_to_quarter(game["Time to Beat"])
 
     # 7. Print OpenAI Usage Summary
     print(enricher.get_cost_summary())
