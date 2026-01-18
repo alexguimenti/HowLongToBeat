@@ -196,20 +196,15 @@ async def main():
         print(f"Critical Error: File '{Config.INPUT_CSV}' not found.")
         return
 
-    # 2. Normalize and Round existing data
-    for game in all_games:
-        for field in ["Year", "Genre", "Game Id", "Time to Beat", "Score", "Platform"]:
-            game[field] = normalize_field(game.get(field))
-        game["Time to Beat"] = round_to_quarter(game["Time to Beat"])
-
-    # 3. Filter games needing any update
+    # 2. Identify games needing updates (without modifying all_games yet)
     to_process = [
-        g for g in all_games if any(
-            g[f] == "Unknown" for f in ["Year", "Genre", "Game Id", "Time to Beat", "Score"]
+        game for game in all_games if any(
+            normalize_field(game.get(f)) == "Unknown" 
+            for f in ["Year", "Genre", "Game Id", "Time to Beat", "Score"]
         )
     ]
 
-    # 4. Limit the work queue
+    # 3. Apply processing limit
     queue = to_process[:Config.MAX_GAMES_TO_PROCESS] if Config.MAX_GAMES_TO_PROCESS else to_process
     
     if not queue:

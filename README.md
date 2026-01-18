@@ -1,4 +1,4 @@
-# HowLongToBeat
+# HowLongToBeat Data Enricher
 
 <h1 align="center">
 <br>
@@ -8,81 +8,74 @@
 HowLongToBeat Data Enricher
 </h1>
 
-<p align="center">This script enriches your game collection CSV with data from HowLongToBeat and classifies genres using OpenAI's GPT-4o-mini.</p>
+<p align="center">An optimized, cost-effective Python tool to enrich your game collection with metadata from HowLongToBeat and automated genre classification using OpenAI's GPT-4o-mini.</p>
 
 <hr />
 
-## Features
+## 🚀 Key Features
 
-- 🐍 **Python** - Core logic
-- 🧾 **CSV Read/Write** - Data handling with skip-logic for already filled rows
-- ⚙️ **Asyncio** - Efficient parallel API calls (HLTB + OpenAI) with semaphore control
-- 🌐 **HowLongToBeat API** - Fetch completion times, scores, and Game IDs
-- 🤖 **OpenAI API** - Automatic genre classification based on a curated list
-- 🛡️ **Data Validation** - Automatically fills missing information with `"Unknown"` and normalizes times
+- 🐍 **Modern Python** - Refactored with classes, type hints, and asynchronous logic.
+- 💰 **Cost Optimized** - Implements **LLM Batching** (processing 20 games per prompt) and **Local Caching** to reduce OpenAI token usage by up to 90%.
+- 📊 **Usage Tracking** - Provides a detailed cost summary in USD and token count at the end of every run.
+- ⚙️ **Smart Processing** - 
+  - **Selective Enrichment**: Only populates "Unknown" for rows currently being processed, preserving the rest of your CSV.
+  - **Pico 8 Logic**: Automatically recognizes Pico 8 games and skips HLTB searches (focusing only on genre classification).
+  - **Deduplication**: Automatically removes duplicate entries (same Game + Platform) before processing.
+- 🌐 **Robust APIs** - Uses `howlongtobeatpy` for playtimes/scores/IDs and `openai` (gpt-4o-mini) for curated genre classification.
+- 🛡️ **Data Normalization** - All "Time to Beat" values are rounded to the nearest **0.25** increment (e.g., 3.50, 4.25).
 
-## Getting Started
+## 🛠️ Configuration
 
-1. Ensure you have Python installed on your system.
-2. Install the required dependencies using pip:
+Customize the script behavior via the `Config` class in `script.py`:
+
+- `MAX_GAMES_TO_PROCESS`: Limit items per run (default: 20).
+- `OVERWRITE_INPUT`: Toggle between updating `games.csv` or creating a new file.
+- `SIMILARITY_THRESHOLD`: Currently set to `0.85` for better HLTB matching.
+- `GENRE_BATCH_SIZE`: Number of games sent to AI in a single batch (default: 20).
+
+## 📦 Getting Started
+
+1. **Install Dependencies**:
     ```bash
     pip install asyncio howlongtobeatpy openai python-dotenv
     ```
-3. Create a `.env` file in the project root and add your OpenAI API key:
+2. **Environment Setup**:
+   Create a `.env` file with your OpenAI key:
     ```env
     OPENAI_API_KEY=your_api_key_here
     ```
-4. Prepare a `games.csv` file in the same directory with at least a `Game` column.
+3. **CSV Preparation**:
+   Ensure `games.csv` exists with at least these columns: `Game, Platform, Year, Genre, Game Id, Time to Beat, Score, Status`.
 
-## Configuration
+## 📖 Usage
 
-You can customize the script behavior at the top of `script.py`:
-
-- `OVERWRITE_INPUT`: Set to `True` to update `games.csv` directly, or `False` to create `games_updated.csv`.
-- `MAX_GAMES_TO_PROCESS`: Limit how many games are processed per run (default: 10). Set to `None` to process everything.
-- `MAX_CONCURRENT_GAMES`: Number of games processed in parallel (default: 5).
-
-## Usage
-
-1. Place your games list in `games.csv`. The file should follow this structure:
-    ```csv
-    Game,Platform,Year,Genre,Game Id,Time to Beat,Score,Status
-    ActRaiser,SNES,,,,,,Backlog
-    ```
-
-2. Run the script:
+1. Run the script:
     ```bash
     python script.py
     ```
+2. The script will:
+    - Clean up duplicate rows.
+    - Fetch genres in efficient batches.
+    - Gather HLTB data concurrently.
+    - Display a financial and token usage summary.
 
-3. The script will:
-    - Skip games that already have all data fields filled.
-    - Search for the best match on HowLongToBeat (requiring >90% similarity).
-    - Use OpenAI to determine the best-fitting genre from a predefined list.
-    - Round the **Time to Beat** to the nearest **0.25** increment (e.g., 3.50, 4.25).
-    - Fill any missing fields with `"Unknown"`.
+## 🗂️ CSV Structure
+
+| Column | Description |
+| :--- | :--- |
+| **Game** | Title of the game (Search key). |
+| **Platform** | Gaming system (helps AI classification). |
+| **Year** | Release year (from HLTB). |
+| **Genre** | Classified from a curated list of 22 genres. |
+| **Game Id** | Official HowLongToBeat unique identifier. |
+| **Time to Beat** | Main story completion time, rounded to 0.25. |
+| **Score** | HLTB community review score (0-100). |
+| **Status** | Personal backlog/beaten status. |
 
 <hr />
 
-## Important
+## ⚖️ Economy & Accuracy
 
-- **Data Integrity**: If a game is not found or the HLTB similarity is low, the script preserves existing data or marks it as `"Unknown"`.
-- **OpenAI Constraints**: Genre classification is restricted to a specific list of 22 genres to ensure database consistency.
-- **Async Execution**: Both APIs are called simultaneously. The script uses a semaphore to process multiple games at once without hitting rate limits.
-
-<hr />
-
-## CSV Structure
-
-The script expects and produces CSV files with the following columns:
-
-- **Game**: The title of the game (primary search key).
-- **Platform**: The gaming platform (helps OpenAI classification).
-- **Year**: Release year (fetched from HLTB).
-- **Genre**: Game genre (classified by OpenAI).
-- **Game Id**: The unique ID from HowLongToBeat (fetched from HLTB).
-- **Time to Beat**: Average time to complete the main story, rounded to 0.25 increments.
-- **Score**: HowLongToBeat community review score.
-- **Status**: Your personal status (e.g., Backlog, Beaten).
-
-You can open the resulting files with Excel, Google Sheets, or any spreadsheet software.
+- **Model**: Uses `gpt-4o-mini`, the most cost-efficient model available.
+- **Batches**: Instructions are sent once per batch, dramatically reducing overhead tokens.
+- **Similarity**: Requires a ≥85% match on HLTB to ensure data quality.
