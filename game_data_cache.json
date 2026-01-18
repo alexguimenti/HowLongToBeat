@@ -1,0 +1,205 @@
+{
+  "digital pinball: necromicon": {
+    "Genre": "Pinball"
+  },
+  "dinky kong": {
+    "Genre": "Platformer"
+  },
+  "dinocity": {
+    "Genre": "Action",
+    "Score": "59",
+    "Year": "1992",
+    "Game Id": "2568",
+    "Time to Beat": "1.75"
+  },
+  "dinosaurs for hire": {
+    "Genre": "Run and Gun"
+  },
+  "dirge of cerberus: final fantasy vii": {
+    "Genre": "Action RPG",
+    "Score": "63",
+    "Year": "2006",
+    "Game Id": "2573",
+    "Time to Beat": "11.50"
+  },
+  "disney's bonkers": {
+    "Genre": "Action",
+    "Score": "68",
+    "Year": "1994",
+    "Game Id": "25893",
+    "Time to Beat": "1.00"
+  },
+  "disney's hercules": {
+    "Genre": "Action Adventure"
+  },
+  "dive alert": {
+    "Genre": "Mini-game"
+  },
+  "dkc 2 : diddy kong's quest": {
+    "Genre": "Platformer"
+  },
+  "dodgeball": {
+    "Genre": "Sports",
+    "Score": "85",
+    "Year": "2005",
+    "Game Id": "44040",
+    "Time to Beat": "2.25"
+  },
+  "dolucky no kusayakiu": {
+    "Genre": "Platformer",
+    "Score": "Unknown",
+    "Year": "1993",
+    "Game Id": "130252",
+    "Time to Beat": "Unknown"
+  },
+  "donald duck in the magic hat": {
+    "Genre": "Platformer"
+  },
+  "donald duck no mahou no boushi": {
+    "Genre": "Action Adventure",
+    "Score": "71",
+    "Year": "1995",
+    "Game Id": "14223",
+    "Time to Beat": "1.00"
+  },
+  "donkey kong": {
+    "Genre": "Platformer",
+    "Score": "63",
+    "Year": "1981",
+    "Game Id": "2681",
+    "Time to Beat": "0.25"
+  },
+  "donkey kong country 2": {
+    "Genre": "Platformer"
+  },
+  "donkey kong land 2": {
+    "Genre": "Platformer",
+    "Score": "71",
+    "Year": "1996",
+    "Game Id": "2696",
+    "Time to Beat": "3.50"
+  },
+  "doremi fantasy": {
+    "Genre": "Platformer"
+  },
+  "double dragon": {
+    "Genre": "Beat 'em up",
+    "Score": "62",
+    "Year": "1987",
+    "Game Id": "2722",
+    "Time to Beat": "1.00"
+  },
+  "downward": {
+    "Genre": "Adventure"
+  },
+  "dr. mario": {
+    "Genre": "Puzzle",
+    "Score": "69",
+    "Year": "1990",
+    "Game Id": "2740",
+    "Time to Beat": "2.50"
+  },
+  "dragon ball: advanced adventure": {
+    "Genre": "Action Adventure",
+    "Score": "77",
+    "Year": "2004",
+    "Game Id": "2803",
+    "Time to Beat": "3.00"
+  },
+  "dragon crystal": {
+    "Genre": "Action RPG",
+    "Score": "66",
+    "Year": "1990",
+    "Game Id": "2808",
+    "Time to Beat": "5.00"
+  },
+  "dragon quest ix": {
+    "Genre": "RPG",
+    "Score": "81",
+    "Year": "2010",
+    "Game Id": "2817",
+    "Time to Beat": "47.25"
+  },
+  "dragon quest v": {
+    "Genre": "RPG"
+  },
+  "dragon quest vi": {
+    "Genre": "RPG"
+  },
+  "dragon quest vii": {
+    "Genre": "RPG"
+  },
+  "dragon view": {
+    "Genre": "Action RPG",
+    "Score": "73",
+    "Year": "1994",
+    "Game Id": "2832",
+    "Time to Beat": "11.50"
+  },
+  "dragon's fury": {
+    "Genre": "Pinball",
+    "Score": "73",
+    "Year": "1990",
+    "Game Id": "2505",
+    "Time to Beat": "1.25"
+  },
+  "drill dozer": {
+    "Genre": "Action Platformer",
+    "Score": "76",
+    "Year": "2005",
+    "Game Id": "2883",
+    "Time to Beat": "6.00"
+  },
+  "driver": {
+    "Genre": "Racing",
+    "Score": "72",
+    "Year": "1999",
+    "Game Id": "2886",
+    "Time to Beat": "11.50"
+  },
+  "driver 2": {
+    "Genre": "Racing",
+    "Score": "75",
+    "Year": "2000",
+    "Game Id": "2887",
+    "Time to Beat": "14.75"
+  },
+  "dungeon!": {
+    "Genre": "Adventure"
+  },
+  "dungeons & dragons: shadow over mystara": {
+    "Genre": "Beat 'em up",
+    "Score": "77",
+    "Year": "1996",
+    "Game Id": "2971",
+    "Time to Beat": "1.50"
+  },
+  "dungeons & dragons: tower of doom": {
+    "Genre": "Beat 'em up",
+    "Score": "70",
+    "Year": "1994",
+    "Game Id": "2972",
+    "Time to Beat": "1.25"
+  },
+  "dynamite cop": {
+    "Genre": "Action",
+    "Score": "75",
+    "Year": "1998",
+    "Game Id": "2988",
+    "Time to Beat": "1.25"
+  },
+  "dynamite dan": {
+    "Genre": "Platformer",
+    "Score": "Unknown",
+    "Year": "1985",
+    "Game Id": "104278",
+    "Time to Beat": "1.00"
+  },
+  "dynamite headdy": {
+    "Genre": "Action Platformer",
+    "Score": "72",
+    "Year": "1994",
+    "Game Id": "2990",
+    "Time to Beat": "3.00"
+  }
+}

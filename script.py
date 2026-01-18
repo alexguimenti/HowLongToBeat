@@ -15,8 +15,8 @@ class Config:
     OVERWRITE_INPUT = True
     INPUT_CSV = "games.csv"
     OUTPUT_CSV = INPUT_CSV if OVERWRITE_INPUT else "games_updated.csv"
-    CACHE_FILE = "genre_cache.json"
-    MAX_GAMES_TO_PROCESS = 100
+    CACHE_FILE = "game_data_cache.json"
+    MAX_GAMES_TO_PROCESS = 20
     MAX_CONCURRENT_GAMES = 5
     GENRE_BATCH_SIZE = 20  # Number of games to send to LLM in one request
     SIMILARITY_THRESHOLD = 0.85
@@ -60,10 +60,10 @@ class GameEnricher:
         self.semaphore = asyncio.Semaphore(Config.MAX_CONCURRENT_GAMES)
         self.total_prompt_tokens = 0
         self.total_completion_tokens = 0
-        self.genre_cache = self._load_cache()
+        self.game_cache: Dict[str, Dict[str, str]] = self._load_cache()
 
-    def _load_cache(self) -> Dict[str, str]:
-        """Loads the genre cache from a local JSON file."""
+    def _load_cache(self) -> Dict[str, Dict[str, str]]:
+        """Loads the game data cache from a local JSON file."""
         if os.path.exists(Config.CACHE_FILE):
             try:
                 with open(Config.CACHE_FILE, 'r', encoding='utf-8') as f:
@@ -73,10 +73,10 @@ class GameEnricher:
         return {}
 
     def _save_cache(self):
-        """Saves the current genre cache to a local JSON file."""
+        """Saves the current game data cache to a local JSON file."""
         try:
             with open(Config.CACHE_FILE, 'w', encoding='utf-8') as f:
-                json.dump(self.genre_cache, f, indent=2)
+                json.dump(self.game_cache, f, indent=2)
         except Exception as e:
             print(f"Cache Save Error: {e}")
 
@@ -104,8 +104,8 @@ class GameEnricher:
         remaining_games = []
         for g in target_games:
             cache_key = g["Game"].lower().strip()
-            if cache_key in self.genre_cache:
-                g["Genre"] = self.genre_cache[cache_key]
+            if cache_key in self.game_cache and self.game_cache[cache_key].get("Genre"):
+                g["Genre"] = self.game_cache[cache_key]["Genre"]
             else:
                 remaining_games.append(g)
 
@@ -143,13 +143,16 @@ Example: {{"Game Name": "Action", "Another Game": "RPG"}}
                 # Update cache and local games
                 for game_name, genre in result_json.items():
                     if genre in Config.GENRES_ALLOWED:
-                        self.genre_cache[game_name.lower().strip()] = genre
+                        key = game_name.lower().strip()
+                        if key not in self.game_cache:
+                            self.game_cache[key] = {}
+                        self.game_cache[key]["Genre"] = genre
 
                 # Apply results from cache back to games
                 for g in batch:
                     key = g["Game"].lower().strip()
-                    if key in self.genre_cache:
-                        g["Genre"] = self.genre_cache[key]
+                    if key in self.game_cache and self.game_cache[key].get("Genre"):
+                        g["Genre"] = self.game_cache[key]["Genre"]
 
                 # Save cache after each successful batch
                 self._save_cache()
@@ -176,18 +179,48 @@ Example: {{"Game Name": "Action", "Another Game": "RPG"}}
             if not needs_hltb:
                 return
 
+            # Check cache for HLTB data first
+            key = name.lower().strip()
+            if key in self.game_cache:
+                cached_data = self.game_cache[key]
+                # If we have at least Game Id and Year, we consider it cached
+                if cached_data.get("Game Id") and cached_data.get("Year"):
+                    game["Score"] = cached_data.get("Score", "Unknown")
+                    game["Year"] = cached_data.get("Year", "Unknown")
+                    game["Game Id"] = cached_data.get("Game Id", "Unknown")
+                    game["Time to Beat"] = cached_data.get("Time to Beat", "Unknown")
+                    print(f"[{index}/{total}] {name}: Data restored from Cache")
+                    return
+
             try:
                 results = await self.hltb.async_search(name)
                 if results:
                     best = max(results, key=lambda x: x.similarity)
                     if best.similarity >= Config.SIMILARITY_THRESHOLD:
-                        game["Score"] = normalize_field(best.review_score)
-                        game["Year"] = normalize_field(best.release_world)
-                        game["Game Id"] = normalize_field(best.game_id)
-                        game["Time to Beat"] = round_to_quarter(best.main_story)
+                        # Prepare data
+                        score = normalize_field(best.review_score)
+                        year = normalize_field(best.release_world)
+                        gid = normalize_field(best.game_id)
+                        ttb = round_to_quarter(best.main_story)
+                        
+                        # Apply to current game
+                        game["Score"] = score
+                        game["Year"] = year
+                        game["Game Id"] = gid
+                        game["Time to Beat"] = ttb
+                        
+                        # Store in cache
+                        if key not in self.game_cache:
+                            self.game_cache[key] = {}
+                        self.game_cache[key].update({
+                            "Score": score,
+                            "Year": year,
+                            "Game Id": gid,
+                            "Time to Beat": ttb
+                        })
+                        self._save_cache()
+                        
                         print(f"[{index}/{total}] {name}: HLTB Data Updated (Sim: {best.similarity:.2f})")
-                    else:
-                        print(f"[{index}/{total}] {name}: Low HLTB Similarity ({best.similarity:.2f})")
                 else:
                     print(f"[{index}/{total}] {name}: Not found on HLTB")
             except Exception as e:
