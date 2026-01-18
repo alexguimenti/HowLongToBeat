@@ -14,7 +14,7 @@ class Config:
     OVERWRITE_INPUT = True
     INPUT_CSV = "games.csv"
     OUTPUT_CSV = INPUT_CSV if OVERWRITE_INPUT else "games_updated.csv"
-    MAX_GAMES_TO_PROCESS = 50
+    MAX_GAMES_TO_PROCESS = 20
     MAX_CONCURRENT_GAMES = 5
     GENRE_BATCH_SIZE = 20  # Number of games to send to LLM in one request
     SIMILARITY_THRESHOLD = 0.85
@@ -132,7 +132,12 @@ If you don't know, use 'Unknown'. No filler text.
         """Processes HLTB data for a single game instance."""
         async with self.semaphore:
             name = game["Game"]
+            platform = game.get("Platform", "").strip().lower()
             
+            # Skip Pico 8 games as they are not on HLTB
+            if "pico 8" in platform:
+                return
+
             # Check if we really need HLTB (other fields besides Genre)
             needs_hltb = any(game[f] == "Unknown" for f in ["Year", "Game Id", "Time to Beat", "Score"])
 
