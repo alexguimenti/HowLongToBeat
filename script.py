@@ -148,6 +148,27 @@ async def process_games(input_file, output_file):
         print(f"Error: The file '{input_file}' was not found.")
         return
 
+    # Deduplicate based on Game and Platform
+    seen = set()
+    unique_games = []
+    duplicates_removed = 0
+    for game in all_games:
+        # Create a unique key for the game
+        name = game.get("Game", "").strip()
+        plat = game.get("Platform", "").strip()
+        key = (name.lower(), plat.lower())
+        
+        if key not in seen:
+            seen.add(key)
+            unique_games.append(game)
+        else:
+            duplicates_removed += 1
+    
+    if duplicates_removed > 0:
+        print(f"Removed {duplicates_removed} duplicate entries (same Game and Platform).")
+    
+    all_games = unique_games
+
     # 2. Filter games that need processing (have at least one missing/Unknown field)
     games_to_process = []
     for game in all_games:
