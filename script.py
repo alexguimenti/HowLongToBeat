@@ -12,6 +12,11 @@ load_dotenv()
 hltb = HowLongToBeat()
 client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+# Limit the number of concurrent games being processed
+# 5 is a safe number to avoid rate limits and keep logs readable
+MAX_CONCURRENT_GAMES = 5
+semaphore = asyncio.Semaphore(MAX_CONCURRENT_GAMES)
+
 async def get_genre(game_name, platform):
     """Fetches the game genre using OpenAI API."""
     try:
@@ -59,9 +64,40 @@ Constraints:
         print(f"\nError fetching genre for {game_name}: {e}")
         return "Unknown"
 
+async def process_single_game(game, index, total_games):
+    """Processes a single game instance with concurrency control."""
+    async with semaphore:
+        # Initialize default values if empty
+        for field in ["Year", "Genre", "Time to Beat", "Score", "Platform"]:
+            if not game.get(field) or game[field].strip() == "":
+                game[field] = "Unknown"
+
+        game_name = game["Game"]
+        platform = game["Platform"]
+        
+        # Parallelize HLTB and OpenAI calls for this specific game
+        hltb_task = hltb.async_search(game_name)
+        genre_task = get_genre(game_name, platform) if game["Genre"] == "Unknown" else asyncio.sleep(0, game["Genre"])
+        
+        try:
+            results_list, genre = await asyncio.gather(hltb_task, genre_task)
+            game["Genre"] = genre if genre else "Unknown"
+
+            if results_list and len(results_list) > 0:
+                best_element = max(results_list, key=lambda element: element.similarity)
+                if best_element.similarity > 0.90:
+                    game["Score"] = str(best_element.review_score) if best_element.review_score else "Unknown"
+                    game["Year"] = str(best_element.release_world) if best_element.release_world else "Unknown"
+                    game["Time to Beat"] = str(best_element.main_story) if best_element.main_story else "Unknown"
+                    print(f"[{index}/{total_games}] {game_name}: Found! (Sim: {best_element.similarity:.2f} | Genre: {game['Genre']})")
+                else:
+                    print(f"[{index}/{total_games}] {game_name}: Skipped HLTB (Low Sim: {best_element.similarity:.2f} | Genre: {game['Genre']})")
+            else:
+                print(f"[{index}/{total_games}] {game_name}: HLTB Not found (Genre: {game['Genre']})")
+        except Exception as e:
+            print(f"[{index}/{total_games}] Error processing {game_name}: {e}")
+
 async def process_games(input_file, output_file):
-    games = []
-    
     # 1. Read the CSV file
     try:
         with open(input_file, mode='r', encoding='utf-8') as f:
@@ -72,48 +108,15 @@ async def process_games(input_file, output_file):
         return
 
     total_games = len(games)
-    print(f"Starting processing of {total_games} games...")
+    print(f"Starting parallel processing of {total_games} games (Concurrency: {MAX_CONCURRENT_GAMES})...")
 
-    # 2. Process each game
-    for index, game in enumerate(games, start=1):
-        # Initialize default values if empty
-        for field in ["Year", "Genre", "Time to Beat", "Score", "Platform"]:
-            if not game.get(field) or game[field].strip() == "":
-                game[field] = "Unknown"
+    # 2. Create tasks for all games
+    tasks = [process_single_game(game, i, total_games) for i, game in enumerate(games, start=1)]
+    
+    # 3. Run all tasks concurrently
+    await asyncio.gather(*tasks)
 
-        game_name = game["Game"]
-        platform = game["Platform"]
-        print(f"[{index}/{total_games}] Processing: {game_name}...", end=" ", flush=True)
-        
-        # Parallelize HLTB and OpenAI calls for efficiency
-        # Only fetch genre if it's currently "Unknown"
-        hltb_task = hltb.async_search(game_name)
-        genre_task = get_genre(game_name, platform) if game["Genre"] == "Unknown" else asyncio.sleep(0, game["Genre"])
-        
-        try:
-            results_list, genre = await asyncio.gather(hltb_task, genre_task)
-            
-            # Update Genre
-            game["Genre"] = genre if genre else "Unknown"
-
-            # Update HLTB data
-            if results_list and len(results_list) > 0:
-                best_element = max(results_list, key=lambda element: element.similarity)
-                
-                if best_element.similarity > 0.90:
-                    game["Score"] = str(best_element.review_score) if best_element.review_score else "Unknown"
-                    game["Year"] = str(best_element.release_world) if best_element.release_world else "Unknown"
-                    game["Time to Beat"] = str(best_element.main_story) if best_element.main_story else "Unknown"
-                    print(f"Found! (Similarity: {best_element.similarity:.2f} | Genre: {game['Genre']})")
-                else:
-                    print(f"Skipped HLTB (Low similarity: {best_element.similarity:.2f} | Genre: {game['Genre']})")
-            else:
-                print(f"HLTB Not found (Genre: {game['Genre']})")
-                
-        except Exception as e:
-            print(f"Error processing {game_name}: {e}")
-
-    # 3. Save results to the new CSV
+    # 4. Save results
     fieldnames = ["Game", "Platform", "Year", "Genre", "Time to Beat", "Score", "Status"]
     try:
         with open(output_file, mode='w', newline='', encoding='utf-8') as f:
@@ -127,5 +130,4 @@ async def process_games(input_file, output_file):
 if __name__ == "__main__":
     INPUT_CSV = "games.csv"
     OUTPUT_CSV = "games_updated.csv"
-    
     asyncio.run(process_games(INPUT_CSV, OUTPUT_CSV))
