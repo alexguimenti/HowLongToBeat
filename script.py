@@ -16,7 +16,7 @@ class Config:
     INPUT_CSV = "games.csv"
     OUTPUT_CSV = INPUT_CSV if OVERWRITE_INPUT else "games_updated.csv"
     CACHE_FILE = "game_data_cache.json"
-    MAX_GAMES_TO_PROCESS = 200
+    MAX_GAMES_TO_PROCESS = 300
     MAX_CONCURRENT_GAMES = 5
     GENRE_BATCH_SIZE = 20  # Number of games to send to LLM in one request
     SIMILARITY_THRESHOLD = 0.85
