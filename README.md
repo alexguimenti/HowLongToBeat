@@ -8,7 +8,7 @@
 HowLongToBeat Data Enricher
 </h1>
 
-<p align="center">This script enriches your game collection CSV with data from HowLongToBeat, including completion times and review scores.</p>
+<p align="center">This script enriches your game collection CSV with data from HowLongToBeat and classifies genres using OpenAI's GPT-4o-mini.</p>
 
 <hr />
 
@@ -16,17 +16,22 @@ HowLongToBeat Data Enricher
 
 - 🐍 **Python** - Core logic
 - 🧾 **CSV Read/Write** - Data handling
-- ⚙️ **Asyncio** - Efficient API calls
-- 🌐 **HowLongToBeat API** - Data source via `howlongtobeatpy`
+- ⚙️ **Asyncio** - Efficient parallel API calls (HLTB + OpenAI)
+- 🌐 **HowLongToBeat API** - Fetch completion times and scores
+- 🤖 **OpenAI API** - Automatic genre classification
 
 ## Getting Started
 
 1. Ensure you have Python installed on your system.
 2. Install the required dependencies using pip:
     ```bash
-    pip install asyncio howlongtobeatpy
+    pip install asyncio howlongtobeatpy openai python-dotenv
     ```
-3. Prepare a `games.csv` file in the same directory with at least a `Game` column.
+3. Create a `.env` file in the project root and add your OpenAI API key:
+    ```env
+    OPENAI_API_KEY=your_api_key_here
+    ```
+4. Prepare a `games.csv` file in the same directory with at least a `Game` column.
 
 ## Usage
 
@@ -41,15 +46,18 @@ HowLongToBeat Data Enricher
     python script.py
     ```
 
-3. The script will process each game, searching for the best match on HowLongToBeat (requiring >90% similarity).
+3. The script will:
+    - Search for the best match on HowLongToBeat (requiring >90% similarity).
+    - Use OpenAI to determine the best-fitting genre from a predefined list.
 4. An updated file named `games_updated.csv` will be created with the fetched data.
 
 <hr />
 
 ## Important
 
-- The script uses a similarity threshold of 0.90 to ensure data accuracy.
-- If a game is not found or has low similarity, it will be skipped.
+- **Similarity**: The script uses a similarity threshold of 0.90 for HLTB to ensure data accuracy.
+- **API Costs**: Genres are processed via OpenAI. Ensure your API key is valid and has credits.
+- **Predefined Genres**: OpenAI is constrained to a specific list of genres (e.g., Action, RPG, Metroidvania, etc.) to keep your database consistent.
 
 <hr />
 
@@ -58,11 +66,11 @@ HowLongToBeat Data Enricher
 The script expects and produces CSV files with the following columns:
 
 - **Game**: The title of the game (used for searching).
-- **Platform**: The gaming platform.
-- **Year**: Release year (updated by script).
-- **Genre**: Game genre.
-- **Time to Beat**: Average time to complete the main story (updated by script).
-- **Score**: HowLongToBeat review score (updated by script).
+- **Platform**: The gaming platform (helps OpenAI classification).
+- **Year**: Release year (updated by HLTB).
+- **Genre**: Game genre (updated by OpenAI).
+- **Time to Beat**: Average time to complete the main story (updated by HLTB).
+- **Score**: HowLongToBeat review score (updated by HLTB).
 - **Status**: Your personal status (e.g., Backlog, Beaten).
 
 You can open the resulting `games_updated.csv` with Excel, Google Sheets, or any text editor.
