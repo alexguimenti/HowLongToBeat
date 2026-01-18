@@ -73,20 +73,29 @@ Constraints:
 async def process_single_game(game, index, total_games):
     """Processes a single game instance with concurrency control."""
     async with semaphore:
-        # Initialize default values if empty
+        # Initialize default values if empty or normalize existing
         for field in ["Year", "Genre", "Time to Beat", "Score", "Platform"]:
-            if not game.get(field) or game[field].strip() == "" or game[field] == "None":
+            val = str(game.get(field, "")).strip()
+            if not val or val in ["", "Unknown", "None"]:
                 game[field] = "Unknown"
+            elif field == "Time to Beat":
+                try:
+                    # Normalize existing numeric times to nearest 0.25
+                    time_val = float(val)
+                    rounded_time = round(time_val * 4) / 4
+                    game[field] = f"{rounded_time:.2f}"
+                except ValueError:
+                    pass
 
         game_name = game["Game"]
         platform = game["Platform"]
         
-        # Determine if we actually need to fetch data
+        # Determine if we actually need to fetch data from APIs
         needs_hltb = any(game[f] == "Unknown" for f in ["Year", "Time to Beat", "Score"])
         needs_genre = game["Genre"] == "Unknown"
 
         if not needs_hltb and not needs_genre:
-            return # Already fully processed
+            return # Already fully processed (including normalization)
 
         # Parallelize HLTB and OpenAI calls for this specific game
         hltb_task = hltb.async_search(game_name) if needs_hltb else asyncio.sleep(0, None)
@@ -104,7 +113,18 @@ async def process_single_game(game, index, total_games):
                     if best_element.similarity > 0.90:
                         game["Score"] = str(best_element.review_score) if best_element.review_score else "Unknown"
                         game["Year"] = str(best_element.release_world) if best_element.release_world else "Unknown"
-                        game["Time to Beat"] = str(best_element.main_story) if best_element.main_story else "Unknown"
+                        
+                        # Round fetched Time to Beat to the nearest 0.25
+                        if best_element.main_story:
+                            try:
+                                time_val = float(best_element.main_story)
+                                rounded_time = round(time_val * 4) / 4
+                                game["Time to Beat"] = f"{rounded_time:.2f}"
+                            except ValueError:
+                                game["Time to Beat"] = "Unknown"
+                        else:
+                            game["Time to Beat"] = "Unknown"
+                            
                         print(f"[{index}/{total_games}] {game_name}: Updated! (Sim: {best_element.similarity:.2f} | Genre: {game['Genre']})")
                     else:
                         print(f"[{index}/{total_games}] {game_name}: Skipped HLTB (Low Sim: {best_element.similarity:.2f} | Genre: {game['Genre']})")
