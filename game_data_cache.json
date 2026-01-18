@@ -201,5 +201,1099 @@
     "Year": "1994",
     "Game Id": "2990",
     "Time to Beat": "3.00"
+  },
+  "e.v.o.: search for eden": {
+    "Genre": "Action Adventure",
+    "Score": "70",
+    "Year": "1992",
+    "Game Id": "3020",
+    "Time to Beat": "8.25"
+  },
+  "earthbound": {
+    "Genre": "RPG",
+    "Score": "88",
+    "Year": "1994",
+    "Game Id": "3034",
+    "Time to Beat": "27.75"
+  },
+  "ecco the dolphin": {
+    "Genre": "Action Adventure",
+    "Score": "59",
+    "Year": "1992",
+    "Game Id": "3043",
+    "Time to Beat": "5.25"
+  },
+  "einhander": {
+    "Genre": "Shoot 'em up",
+    "Score": "77",
+    "Year": "1997",
+    "Game Id": "3065",
+    "Time to Beat": "2.50"
+  },
+  "espada de vermelh o": {
+    "Genre": "Action RPG"
+  },
+  "eternal ring": {
+    "Genre": "RPG",
+    "Score": "65",
+    "Year": "2000",
+    "Game Id": "3185",
+    "Time to Beat": "9.75"
+  },
+  "evolution: eternal dungeons": {
+    "Genre": "Action RPG",
+    "Score": "40",
+    "Year": "2000",
+    "Game Id": "3253",
+    "Time to Beat": "19.50"
+  },
+  "fallen star": {
+    "Genre": "Adventure"
+  },
+  "falling sand": {
+    "Genre": "Mini-game"
+  },
+  "fantastic night dreams cotton original": {
+    "Genre": "Action"
+  },
+  "fantasy zone": {
+    "Genre": "Shoot 'em up",
+    "Score": "67",
+    "Year": "1986",
+    "Game Id": "3372",
+    "Time to Beat": "1.25"
+  },
+  "fantasy zone ii: the tears of opa-opa": {
+    "Genre": "Shoot 'em up",
+    "Score": "73",
+    "Year": "1987",
+    "Game Id": "22508",
+    "Time to Beat": "1.75"
+  },
+  "farm panic": {
+    "Genre": "Puzzle"
+  },
+  "faselei!": {
+    "Genre": "Action RPG",
+    "Score": "95",
+    "Year": "1999",
+    "Game Id": "3391",
+    "Time to Beat": "9.75"
+  },
+  "fatal fury: first contact": {
+    "Genre": "Fighting",
+    "Score": "63",
+    "Year": "1999",
+    "Game Id": "3403",
+    "Time to Beat": "0.25"
+  },
+  "faxanadu": {
+    "Genre": "Action RPG",
+    "Score": "70",
+    "Year": "1987",
+    "Game Id": "3422",
+    "Time to Beat": "6.00"
+  },
+  "final fantasy adventure": {
+    "Genre": "Action RPG",
+    "Score": "70",
+    "Year": "1991",
+    "Game Id": "3481",
+    "Time to Beat": "10.50"
+  },
+  "final fantasy iv": {
+    "Genre": "RPG",
+    "Score": "80",
+    "Year": "1991",
+    "Game Id": "3499",
+    "Time to Beat": "20.00"
+  },
+  "final fantasy legend 2": {
+    "Genre": "RPG"
+  },
+  "final fantasy legend 3": {
+    "Genre": "RPG"
+  },
+  "final fantasy tactics the lion war remixed": {
+    "Genre": "Strategy"
+  },
+  "final fantasy vii": {
+    "Genre": "RPG",
+    "Score": "90",
+    "Year": "1997",
+    "Game Id": "3521",
+    "Time to Beat": "36.00"
+  },
+  "final fantasy viii": {
+    "Genre": "RPG",
+    "Score": "80",
+    "Year": "1999",
+    "Game Id": "3524",
+    "Time to Beat": "38.50"
+  },
+  "final fight": {
+    "Genre": "Beat 'em up",
+    "Score": "71",
+    "Year": "1990",
+    "Game Id": "3540",
+    "Time to Beat": "1.00"
+  },
+  "final soldier": {
+    "Genre": "Shooter",
+    "Score": "71",
+    "Year": "1991",
+    "Game Id": "17275",
+    "Time to Beat": "1.25"
+  },
+  "fire emblem": {
+    "Genre": "Strategy",
+    "Score": "81",
+    "Year": "2003",
+    "Game Id": "3551",
+    "Time to Beat": "26.75"
+  },
+  "fire emblem the sacred stones": {
+    "Genre": "Strategy"
+  },
+  "fire emblem: the sacred stones": {
+    "Genre": "Strategy",
+    "Score": "81",
+    "Year": "2004",
+    "Game Id": "3564",
+    "Time to Beat": "24.00"
+  },
+  "fire 'n ice": {
+    "Genre": "Puzzle",
+    "Score": "72",
+    "Year": "1992",
+    "Game Id": "3549",
+    "Time to Beat": "8.75"
+  },
+  "flipknight": {
+    "Genre": "Action Platformer"
+  },
+  "flipnic: ultimate pinball": {
+    "Genre": "Pinball",
+    "Score": "70",
+    "Year": "2005",
+    "Game Id": "3601",
+    "Time to Beat": "8.00"
+  },
+  "front mission: gun hazard": {
+    "Genre": "Run and Gun",
+    "Score": "78",
+    "Year": "1996",
+    "Game Id": "3731",
+    "Time to Beat": "17.00"
+  },
+  "frostpunk": {
+    "Genre": "Survival Horror"
+  },
+  "fuz": {
+    "Genre": "Puzzle"
+  },
+  "galaga": {
+    "Genre": "Shoot 'em up",
+    "Score": "70",
+    "Year": "1981",
+    "Game Id": "3807",
+    "Time to Beat": "0.75"
+  },
+  "galaxian": {
+    "Genre": "Shoot 'em up",
+    "Score": "63",
+    "Year": "1979",
+    "Game Id": "3811",
+    "Time to Beat": "0.25"
+  },
+  "ganbare goemon 3": {
+    "Genre": "Action Adventure",
+    "Score": "86",
+    "Year": "1994",
+    "Game Id": "31270",
+    "Time to Beat": "6.25"
+  },
+  "ganbare! daiku no gen-san": {
+    "Genre": "Action Platformer",
+    "Score": "80",
+    "Year": "1993",
+    "Game Id": "42722",
+    "Time to Beat": "1.75"
+  },
+  "gargoyle's quest": {
+    "Genre": "Action RPG",
+    "Score": "72",
+    "Year": "1990",
+    "Game Id": "3844",
+    "Time to Beat": "3.00"
+  },
+  "gargoyle's quest ii": {
+    "Genre": "Action RPG",
+    "Score": "71",
+    "Year": "1992",
+    "Game Id": "3845",
+    "Time to Beat": "3.00"
+  },
+  "gar's den": {
+    "Genre": "Platformer"
+  },
+  "gate of thunder": {
+    "Genre": "Shooter",
+    "Score": "76",
+    "Year": "1992",
+    "Game Id": "3851",
+    "Time to Beat": "1.00"
+  },
+  "genji: dawn of the samurai": {
+    "Genre": "Action Adventure",
+    "Score": "76",
+    "Year": "2005",
+    "Game Id": "3889",
+    "Time to Beat": "7.00"
+  },
+  "ghost pilots": {
+    "Genre": "Shoot 'em up",
+    "Score": "58",
+    "Year": "1991",
+    "Game Id": "22104",
+    "Time to Beat": "1.50"
+  },
+  "ghostbusters ii gb": {
+    "Genre": "Action"
+  },
+  "ghosts 'n goblins": {
+    "Genre": "Action Platformer",
+    "Score": "59",
+    "Year": "1985",
+    "Game Id": "3923",
+    "Time to Beat": "2.75"
+  },
+  "ghoul patrol": {
+    "Genre": "Action",
+    "Score": "56",
+    "Year": "1994",
+    "Game Id": "3926",
+    "Time to Beat": "1.25"
+  },
+  "ghouls 'n ghosts": {
+    "Genre": "Action Platformer",
+    "Score": "71",
+    "Year": "1988",
+    "Game Id": "3927",
+    "Time to Beat": "2.00"
+  },
+  "ghouls n  ghosts": {
+    "Genre": "Action Platformer",
+    "Score": "71",
+    "Year": "1988",
+    "Game Id": "3927",
+    "Time to Beat": "2.00"
+  },
+  "ginga fukei densetsu sapphire": {
+    "Genre": "Shooter",
+    "Score": "82",
+    "Year": "1995",
+    "Game Id": "22337",
+    "Time to Beat": "1.25"
+  },
+  "glory hunters": {
+    "Genre": "Strategy",
+    "Score": "Unknown",
+    "Year": "2025",
+    "Game Id": "177916",
+    "Time to Beat": "Unknown"
+  },
+  "gods": {
+    "Genre": "Action Platformer"
+  },
+  "golden axe": {
+    "Genre": "Beat 'em up",
+    "Score": "66",
+    "Year": "1989",
+    "Game Id": "3994",
+    "Time to Beat": "1.00"
+  },
+  "golden axe ii": {
+    "Genre": "Beat 'em up",
+    "Score": "66",
+    "Year": "1991",
+    "Game Id": "3995",
+    "Time to Beat": "1.00"
+  },
+  "golden axe warrior": {
+    "Genre": "Action Adventure",
+    "Score": "71",
+    "Year": "1991",
+    "Game Id": "3997",
+    "Time to Beat": "6.00"
+  },
+  "golf sunday": {
+    "Genre": "Sports"
+  },
+  "golvellius: valley of doom": {
+    "Genre": "Action Adventure",
+    "Score": "69",
+    "Year": "1987",
+    "Game Id": "4009",
+    "Time to Beat": "5.00"
+  },
+  "gon": {
+    "Genre": "Action Platformer",
+    "Score": "40",
+    "Year": "1994",
+    "Game Id": "42755",
+    "Time to Beat": "2.75"
+  },
+  "goof troop": {
+    "Genre": "Action Adventure",
+    "Score": "80",
+    "Year": "1993",
+    "Game Id": "4012",
+    "Time to Beat": "2.25"
+  },
+  "gran turismo a-spec": {
+    "Genre": "Racing",
+    "Score": "81",
+    "Year": "2001",
+    "Game Id": "4046",
+    "Time to Beat": "40.25"
+  },
+  "great greed": {
+    "Genre": "RPG",
+    "Score": "73",
+    "Year": "1992",
+    "Game Id": "4095",
+    "Time to Beat": "11.25"
+  },
+  "grow dungeon": {
+    "Genre": "Puzzle"
+  },
+  "growl": {
+    "Genre": "Beat 'em up",
+    "Score": "59",
+    "Year": "1991",
+    "Game Id": "19607",
+    "Time to Beat": "0.50"
+  },
+  "guncho": {
+    "Genre": "Action"
+  },
+  "gunstar heroes": {
+    "Genre": "Run and Gun",
+    "Score": "81",
+    "Year": "1993",
+    "Game Id": "4217",
+    "Time to Beat": "2.00"
+  },
+  "gurumin": {
+    "Genre": "Action Adventure"
+  },
+  "hamtaro: ham-ham heartbreak": {
+    "Genre": "Puzzle",
+    "Score": "78",
+    "Year": "2002",
+    "Game Id": "4282",
+    "Time to Beat": "8.50"
+  },
+  "haunting": {
+    "Genre": "Action"
+  },
+  "heart of darkness": {
+    "Genre": "Action Adventure",
+    "Score": "73",
+    "Year": "1998",
+    "Game Id": "4364",
+    "Time to Beat": "5.25"
+  },
+  "hexcite: the shapes of victory": {
+    "Genre": "Puzzle",
+    "Score": "Unknown",
+    "Year": "1999",
+    "Game Id": "64395",
+    "Time to Beat": "Unknown"
+  },
+  "high seas havoc": {
+    "Genre": "Action Platformer",
+    "Score": "67",
+    "Year": "1993",
+    "Game Id": "15016",
+    "Time to Beat": "5.00"
+  },
+  "high stakes": {
+    "Genre": "Racing"
+  },
+  "hogs of war": {
+    "Genre": "Strategy",
+    "Score": "76",
+    "Year": "2000",
+    "Game Id": "4485",
+    "Time to Beat": "13.00"
+  },
+  "home alone": {
+    "Genre": "Action",
+    "Score": "51",
+    "Year": "1991",
+    "Game Id": "4492",
+    "Time to Beat": "1.75"
+  },
+  "i just wanna land": {
+    "Genre": "Platformer"
+  },
+  "illusion of gaia": {
+    "Genre": "Action RPG",
+    "Score": "77",
+    "Year": "1993",
+    "Game Id": "4623",
+    "Time to Beat": "13.00"
+  },
+  "impossible mission": {
+    "Genre": "Action Adventure",
+    "Score": "68",
+    "Year": "1984",
+    "Game Id": "4641",
+    "Time to Beat": "3.00"
+  },
+  "indestructotank gb": {
+    "Genre": "Action"
+  },
+  "indiana jones' greatest adventures": {
+    "Genre": "Action Adventure",
+    "Score": "68",
+    "Year": "1994",
+    "Game Id": "15936",
+    "Time to Beat": "4.50"
+  },
+  "into ruins": {
+    "Genre": "Adventure"
+  },
+  "invader": {
+    "Genre": "Shoot 'em up",
+    "Score": "75",
+    "Year": "2002",
+    "Game Id": "17961",
+    "Time to Beat": "0.50"
+  },
+  "jabberwocky": {
+    "Genre": "Adventure",
+    "Score": "20",
+    "Year": "Unknown",
+    "Game Id": "79678",
+    "Time to Beat": "0.50"
+  },
+  "jack of cards": {
+    "Genre": "Puzzle"
+  },
+  "jet set willy": {
+    "Genre": "Platformer",
+    "Score": "57",
+    "Year": "1984",
+    "Game Id": "19335",
+    "Time to Beat": "1.75"
+  },
+  "jet set willy ii": {
+    "Genre": "Platformer"
+  },
+  "juka and the monophonic menace": {
+    "Genre": "Platformer",
+    "Score": "58",
+    "Year": "2006",
+    "Game Id": "22034",
+    "Time to Beat": "10.00"
+  },
+  "jungle strike": {
+    "Genre": "Action",
+    "Score": "70",
+    "Year": "1993",
+    "Game Id": "4890",
+    "Time to Beat": "6.75"
+  },
+  "just one boss": {
+    "Genre": "Mini-game"
+  },
+  "kalikan": {
+    "Genre": "Action"
+  },
+  "katamari damacy": {
+    "Genre": "Action",
+    "Score": "84",
+    "Year": "2004",
+    "Game Id": "4941",
+    "Time to Beat": "6.00"
+  },
+  "kenseiden": {
+    "Genre": "Action",
+    "Score": "59",
+    "Year": "1988",
+    "Game Id": "4955",
+    "Time to Beat": "1.00"
+  },
+  "kensei-den": {
+    "Genre": "RPG"
+  },
+  "kid dracula": {
+    "Genre": "Action Platformer",
+    "Score": "66",
+    "Year": "1993",
+    "Game Id": "4970",
+    "Time to Beat": "2.00"
+  },
+  "kid icarus": {
+    "Genre": "Action Platformer",
+    "Score": "64",
+    "Year": "1986",
+    "Game Id": "4971",
+    "Time to Beat": "3.75"
+  },
+  "king arthur's world": {
+    "Genre": "Strategy",
+    "Score": "71",
+    "Year": "1993",
+    "Game Id": "5007",
+    "Time to Beat": "3.00"
+  },
+  "king colossus": {
+    "Genre": "Action"
+  },
+  "king of dragons": {
+    "Genre": "Beat 'em up",
+    "Score": "71",
+    "Year": "1991",
+    "Game Id": "9968",
+    "Time to Beat": "1.00"
+  },
+  "kirby dream course": {
+    "Genre": "Puzzle",
+    "Score": "72",
+    "Year": "1994",
+    "Game Id": "5076",
+    "Time to Beat": "3.25"
+  },
+  "kirby: squeak squad": {
+    "Genre": "Action Platformer",
+    "Score": "74",
+    "Year": "2006",
+    "Game Id": "5086",
+    "Time to Beat": "4.00"
+  },
+  "kirby\u2019s dream land 2": {
+    "Genre": "Platformer"
+  },
+  "kirby's adventure": {
+    "Genre": "Platformer",
+    "Score": "77",
+    "Year": "1993",
+    "Game Id": "5070",
+    "Time to Beat": "3.50"
+  },
+  "kirby's block ball": {
+    "Genre": "Puzzle",
+    "Score": "69",
+    "Year": "1996",
+    "Game Id": "5072",
+    "Time to Beat": "2.50"
+  },
+  "kirby's dream course": {
+    "Genre": "Puzzle",
+    "Score": "72",
+    "Year": "1994",
+    "Game Id": "5076",
+    "Time to Beat": "3.25"
+  },
+  "kirby's dream land": {
+    "Genre": "Platformer",
+    "Score": "70",
+    "Year": "1992",
+    "Game Id": "5077",
+    "Time to Beat": "0.75"
+  },
+  "kirby's dream land 2": {
+    "Genre": "Platformer",
+    "Score": "70",
+    "Year": "1995",
+    "Game Id": "5078",
+    "Time to Beat": "2.75"
+  },
+  "kirby's pinball land": {
+    "Genre": "Pinball",
+    "Score": "59",
+    "Year": "1993",
+    "Game Id": "5081",
+    "Time to Beat": "1.25"
+  },
+  "kishin douji zenki battle raiden": {
+    "Genre": "Action",
+    "Score": "68",
+    "Year": "1995",
+    "Game Id": "31299",
+    "Time to Beat": "1.75"
+  },
+  "kiss pinball": {
+    "Genre": "Pinball",
+    "Score": "40",
+    "Year": "2000",
+    "Game Id": "24553",
+    "Time to Beat": "1.25"
+  },
+  "klonoa": {
+    "Genre": "Platformer",
+    "Score": "75",
+    "Year": "2008",
+    "Game Id": "5091",
+    "Time to Beat": "5.00"
+  },
+  "klonoa 2: lunatea's veil": {
+    "Genre": "Platformer",
+    "Score": "78",
+    "Year": "2001",
+    "Game Id": "5093",
+    "Time to Beat": "6.25"
+  },
+  "klonoa: door to phantomile": {
+    "Genre": "Platformer",
+    "Score": "78",
+    "Year": "1997",
+    "Game Id": "5094",
+    "Time to Beat": "4.25"
+  },
+  "knights of the round": {
+    "Genre": "Beat 'em up",
+    "Score": "69",
+    "Year": "1991",
+    "Game Id": "5106",
+    "Time to Beat": "1.00"
+  },
+  "kono subarashii sekai ni shukufuku o! fukkatsu no beldia": {
+    "Genre": "RPG",
+    "Score": "66",
+    "Year": "2017",
+    "Game Id": "54523",
+    "Time to Beat": "5.00"
+  },
+  "kyuutenkai fantastic pinball": {
+    "Genre": "Pinball"
+  },
+  "lady sword": {
+    "Genre": "Action Adventure"
+  },
+  "lamborghini american challenge": {
+    "Genre": "Racing",
+    "Score": "69",
+    "Year": "1993",
+    "Game Id": "12047",
+    "Time to Beat": "3.25"
+  },
+  "land of illusion starring mickey mouse": {
+    "Genre": "Platformer",
+    "Score": "76",
+    "Year": "1993",
+    "Game Id": "12191",
+    "Time to Beat": "2.25"
+  },
+  "landstalker": {
+    "Genre": "Action Adventure"
+  },
+  "last alert": {
+    "Genre": "Action",
+    "Score": "63",
+    "Year": "1989",
+    "Game Id": "22313",
+    "Time to Beat": "2.25"
+  },
+  "last blade: beyond the destiny": {
+    "Genre": "Fighting",
+    "Score": "67",
+    "Year": "2000",
+    "Game Id": "9992",
+    "Time to Beat": "0.25"
+  },
+  "layla": {
+    "Genre": "Action Platformer",
+    "Score": "48",
+    "Year": "1986",
+    "Game Id": "23393",
+    "Time to Beat": "3.00"
+  },
+  "legacy of kain: blood omen": {
+    "Genre": "Action RPG"
+  },
+  "legacy of the wizard": {
+    "Genre": "RPG",
+    "Score": "60",
+    "Year": "1987",
+    "Game Id": "5218",
+    "Time to Beat": "4.50"
+  },
+  "legend of oasis": {
+    "Genre": "Action RPG",
+    "Score": "73",
+    "Year": "1996",
+    "Game Id": "10018",
+    "Time to Beat": "12.75"
+  },
+  "lil' satan's cake quest": {
+    "Genre": "Adventure"
+  },
+  "lilo & stitch": {
+    "Genre": "Action Adventure"
+  },
+  "link to the past": {
+    "Genre": "Action RPG"
+  },
+  "linkle liver story": {
+    "Genre": "Action Adventure",
+    "Score": "73",
+    "Year": "1996",
+    "Game Id": "14882",
+    "Time to Beat": "6.50"
+  },
+  "little architect": {
+    "Genre": "Puzzle"
+  },
+  "little eidolons": {
+    "Genre": "Puzzle"
+  },
+  "little samson": {
+    "Genre": "Platformer",
+    "Score": "78",
+    "Year": "1992",
+    "Game Id": "5332",
+    "Time to Beat": "2.25"
+  },
+  "lords of thunder": {
+    "Genre": "Shooter"
+  },
+  "low knight": {
+    "Genre": "Action Platformer"
+  },
+  "low mem sky": {
+    "Genre": "Action"
+  },
+  "lufia 2": {
+    "Genre": "RPG"
+  },
+  "magic knight rayearth": {
+    "Genre": "Action RPG",
+    "Score": "77",
+    "Year": "1995",
+    "Game Id": "5526",
+    "Time to Beat": "13.00"
+  },
+  "magic sword": {
+    "Genre": "Action",
+    "Score": "67",
+    "Year": "1990",
+    "Game Id": "5530",
+    "Time to Beat": "1.25"
+  },
+  "magical chase": {
+    "Genre": "Shoot 'em up",
+    "Score": "67",
+    "Year": "1991",
+    "Game Id": "15042",
+    "Time to Beat": "1.00"
+  },
+  "magical drop pocket": {
+    "Genre": "Puzzle",
+    "Score": "63",
+    "Year": "1999",
+    "Game Id": "85321",
+    "Time to Beat": "0.50"
+  },
+  "magical hat no buttobi turbo! daib?ken": {
+    "Genre": "Platformer"
+  },
+  "magical quest": {
+    "Genre": "Platformer"
+  },
+  "magician lord": {
+    "Genre": "Action",
+    "Score": "51",
+    "Year": "1990",
+    "Game Id": "5548",
+    "Time to Beat": "1.50"
+  },
+  "mai chan's sweet buns": {
+    "Genre": "Mini-game"
+  },
+  "mai-chan's sweet buns": {
+    "Genre": "Mini-game"
+  },
+  "marble madness": {
+    "Genre": "Puzzle",
+    "Score": "63",
+    "Year": "1984",
+    "Game Id": "5614",
+    "Time to Beat": "0.75"
+  },
+  "mario & luigi: bowser's inside story": {
+    "Genre": "RPG",
+    "Score": "84",
+    "Year": "2009",
+    "Game Id": "5619",
+    "Time to Beat": "22.00"
+  },
+  "mario & luigi: superstar saga": {
+    "Genre": "RPG",
+    "Score": "82",
+    "Year": "2003",
+    "Game Id": "5622",
+    "Time to Beat": "18.00"
+  },
+  "mario picross": {
+    "Genre": "Puzzle",
+    "Score": "74",
+    "Year": "1995",
+    "Game Id": "5664",
+    "Time to Beat": "15.75"
+  },
+  "mario pinball land": {
+    "Genre": "Pinball",
+    "Score": "54",
+    "Year": "2004",
+    "Game Id": "5652",
+    "Time to Beat": "4.50"
+  },
+  "mario rpg": {
+    "Genre": "RPG"
+  },
+  "mario tennis": {
+    "Genre": "Sports",
+    "Score": "76",
+    "Year": "2000",
+    "Game Id": "5657",
+    "Time to Beat": "8.25"
+  },
+  "mario's picross": {
+    "Genre": "Puzzle",
+    "Score": "74",
+    "Year": "1995",
+    "Game Id": "5664",
+    "Time to Beat": "15.75"
+  },
+  "marvel vs capcom": {
+    "Genre": "Fighting"
+  },
+  "mask": {
+    "Genre": "Action"
+  },
+  "maze of galious: knightmare ii": {
+    "Genre": "Adventure",
+    "Score": "68",
+    "Year": "1987",
+    "Game Id": "110372",
+    "Time to Beat": "9.25"
+  },
+  "mazes of fate": {
+    "Genre": "RPG",
+    "Score": "73",
+    "Year": "2006",
+    "Game Id": "5746",
+    "Time to Beat": "14.00"
+  },
+  "mega man": {
+    "Genre": "Action Platformer",
+    "Score": "67",
+    "Year": "1987",
+    "Game Id": "5803",
+    "Time to Beat": "2.75"
+  },
+  "mega man 3": {
+    "Genre": "Action Platformer",
+    "Score": "77",
+    "Year": "1990",
+    "Game Id": "5809",
+    "Time to Beat": "3.50"
+  },
+  "mega man battle network": {
+    "Genre": "Action RPG",
+    "Score": "71",
+    "Year": "2001",
+    "Game Id": "5820",
+    "Time to Beat": "13.25"
+  },
+  "mega man: the wily wars": {
+    "Genre": "Action Platformer",
+    "Score": "73",
+    "Year": "1994",
+    "Game Id": "5865",
+    "Time to Beat": "6.75"
+  },
+  "mega twins (chiki chiki boys)": {
+    "Genre": "Action Platformer"
+  },
+  "megaman x4": {
+    "Genre": "Action Platformer"
+  },
+  "mercenary force": {
+    "Genre": "Action",
+    "Score": "51",
+    "Year": "1990",
+    "Game Id": "13911",
+    "Time to Beat": "1.00"
+  },
+  "mercs": {
+    "Genre": "Run and Gun",
+    "Score": "66",
+    "Year": "1991",
+    "Game Id": "5891",
+    "Time to Beat": "0.75"
+  },
+  "metal gear solid": {
+    "Genre": "Action Adventure",
+    "Score": "89",
+    "Year": "1998",
+    "Game Id": "5908",
+    "Time to Beat": "11.25"
+  },
+  "metal slug": {
+    "Genre": "Run and Gun",
+    "Score": "76",
+    "Year": "1996",
+    "Game Id": "5928",
+    "Time to Beat": "1.00"
+  },
+  "metal slug 1st mission": {
+    "Genre": "Run and Gun",
+    "Score": "69",
+    "Year": "1999",
+    "Game Id": "5929",
+    "Time to Beat": "1.25"
+  },
+  "metal slug 2nd mission": {
+    "Genre": "Run and Gun",
+    "Score": "69",
+    "Year": "2000",
+    "Game Id": "5931",
+    "Time to Beat": "1.50"
+  },
+  "metal walker": {
+    "Genre": "Action RPG",
+    "Score": "61",
+    "Year": "1999",
+    "Game Id": "5943",
+    "Time to Beat": "13.00"
+  },
+  "metal warriors": {
+    "Genre": "Action",
+    "Score": "72",
+    "Year": "1995",
+    "Game Id": "5944",
+    "Time to Beat": "2.75"
+  },
+  "metroid": {
+    "Genre": "Metroidvania",
+    "Score": "68",
+    "Year": "1986",
+    "Game Id": "5948",
+    "Time to Beat": "6.00"
+  },
+  "metroid fusion": {
+    "Genre": "Metroidvania",
+    "Score": "82",
+    "Year": "2002",
+    "Game Id": "5950",
+    "Time to Beat": "5.00"
+  },
+  "metroid ii: return of samus": {
+    "Genre": "Metroidvania",
+    "Score": "69",
+    "Year": "1991",
+    "Game Id": "5951",
+    "Time to Beat": "4.75"
+  },
+  "metroid prime pinball": {
+    "Genre": "Pinball",
+    "Score": "68",
+    "Year": "2005",
+    "Game Id": "5957",
+    "Time to Beat": "1.75"
+  },
+  "metroid zero mission": {
+    "Genre": "Metroidvania",
+    "Score": "84",
+    "Year": "2004",
+    "Game Id": "5961",
+    "Time to Beat": "4.50"
+  },
+  "metroid: zero mission": {
+    "Genre": "Metroidvania",
+    "Score": "84",
+    "Year": "2004",
+    "Game Id": "5961",
+    "Time to Beat": "4.50"
+  },
+  "micro machines": {
+    "Genre": "Racing",
+    "Score": "59",
+    "Year": "2002",
+    "Game Id": "117320",
+    "Time to Beat": "0.75"
+  },
+  "microsoft pinball arcade": {
+    "Genre": "Pinball",
+    "Score": "72",
+    "Year": "1997",
+    "Game Id": "105879",
+    "Time to Beat": "0.50"
+  },
+  "mighty morphin power rangers": {
+    "Genre": "Beat 'em up",
+    "Score": "66",
+    "Year": "1994",
+    "Game Id": "15217",
+    "Time to Beat": "1.00"
+  },
+  "mighty morphin power rangers: the movie": {
+    "Genre": "Beat 'em up",
+    "Score": "69",
+    "Year": "1994",
+    "Game Id": "6046",
+    "Time to Beat": "1.00"
+  },
+  "milon's secret castle": {
+    "Genre": "Platformer",
+    "Score": "61",
+    "Year": "1986",
+    "Game Id": "6061",
+    "Time to Beat": "1.50"
+  },
+  "mimic": {
+    "Genre": "Puzzle"
+  },
+  "mini mines": {
+    "Genre": "Mini-game"
+  },
+  "minimines": {
+    "Genre": "Mini-game"
+  },
+  "mistigri": {
+    "Genre": "Puzzle"
+  },
+  "monster max": {
+    "Genre": "Platformer",
+    "Score": "Unknown",
+    "Year": "1994",
+    "Game Id": "6164",
+    "Time to Beat": "Unknown"
+  },
+  "monster tale": {
+    "Genre": "Action Adventure",
+    "Score": "74",
+    "Year": "2010",
+    "Game Id": "6179",
+    "Time to Beat": "7.50"
+  },
+  "monster world iv": {
+    "Genre": "Action Adventure",
+    "Score": "76",
+    "Year": "1994",
+    "Game Id": "6182",
+    "Time to Beat": "7.25"
+  },
+  "metroid prime": {
+    "Score": "87",
+    "Year": "2002",
+    "Game Id": "5953",
+    "Time to Beat": "13.75"
   }
 }
