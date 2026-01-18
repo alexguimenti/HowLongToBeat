@@ -12,7 +12,7 @@ load_dotenv()
 OVERWRITE_INPUT = True  # Set to True to update the input file directly
 INPUT_CSV = "games.csv"
 OUTPUT_CSV = INPUT_CSV if OVERWRITE_INPUT else "games_updated.csv"
-MAX_GAMES_TO_PROCESS = 10  # Limit the number of games to update per run. Set to None for no limit.
+MAX_GAMES_TO_PROCESS = 50  # Limit the number of games to update per run. Set to None for no limit.
 
 # Initialize API clients
 hltb = HowLongToBeat()
