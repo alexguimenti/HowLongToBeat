@@ -9,7 +9,7 @@ from openai import AsyncOpenAI
 load_dotenv()
 
 # Configuration
-OVERWRITE_INPUT = False  # Set to True to update the input file directly
+OVERWRITE_INPUT = True  # Set to True to update the input file directly
 INPUT_CSV = "games.csv"
 OUTPUT_CSV = INPUT_CSV if OVERWRITE_INPUT else "games_updated.csv"
 MAX_GAMES_TO_PROCESS = 10  # Limit the number of games to update per run. Set to None for no limit.
