@@ -16,6 +16,7 @@ class Config:
     OUTPUT_CSV = INPUT_CSV if OVERWRITE_INPUT else "games_updated.csv"
     MAX_GAMES_TO_PROCESS = 50
     MAX_CONCURRENT_GAMES = 5
+    GENRE_BATCH_SIZE = 20  # Number of games to send to LLM in one request
     SIMILARITY_THRESHOLD = 0.90
     GENRES_ALLOWED = [
         "Action", "Action Adventure", "Action Platformer", "Action RPG", "Adventure",
@@ -31,7 +32,6 @@ def round_to_quarter(value: Optional[str]) -> str:
     if not value or value in ["Unknown", "None", ""]:
         return "Unknown"
     try:
-        # Converting to float and rounding to nearest 0.25
         time_val = float(value)
         rounded = round(time_val * 4) / 4
         return f"{rounded:.2f}"
@@ -53,73 +53,88 @@ class GameEnricher:
         self.hltb = HowLongToBeat()
         self.openai = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         self.semaphore = asyncio.Semaphore(Config.MAX_CONCURRENT_GAMES)
+        self.genre_cache: Dict[str, str] = {}
 
-    async def fetch_genre(self, game_name: str, platform: str) -> str:
-        """Classifies the game genre using OpenAI API."""
-        try:
-            completion = await self.openai.chat.completions.create(
-                model="o4-mini",
-                messages=[
-                    {"role": "system", "content": f"""
-You are a video game database expert. Your sole purpose is to classify video games into specific genres.
-Output ONLY the genre name from the following allowed list: {', '.join(Config.GENRES_ALLOWED)}.
-No conversational filler. No punctuation at the end. Output in English.
-                    """},
-                    {"role": "user", "content": f"{game_name} - {platform}"}
-                ]
-            )
-            genre = completion.choices[0].message.content.strip()
-            return genre if genre in Config.GENRES_ALLOWED else "Unknown"
-        except Exception as e:
-            print(f"\n[OpenAI Error] {game_name}: {e}")
-            return "Unknown"
+    async def fetch_genres_batch(self, games_to_process: List[Dict]):
+        """Fetches genres for a list of games in batches to save tokens."""
+        # 1. Check cache first
+        remaining_games = []
+        for g in games_to_process:
+            cache_key = g["Game"].lower().strip()
+            if cache_key in self.genre_cache:
+                g["Genre"] = self.genre_cache[cache_key]
+            else:
+                remaining_games.append(g)
 
-    async def process_single_game(self, game: Dict, index: int, total: int):
-        """Orchestrates the update process for a single game instance."""
-        async with self.semaphore:
-            # 1. Initial Normalization
-            for field in ["Year", "Genre", "Game Id", "Time to Beat", "Score", "Platform"]:
-                game[field] = normalize_field(game.get(field))
-            
-            # Normalize existing time format
-            game["Time to Beat"] = round_to_quarter(game["Time to Beat"])
+        if not remaining_games:
+            return
 
-            name, plat = game["Game"], game["Platform"]
-            
-            # Check if we need to call APIs
-            needs_hltb = any(game[f] == "Unknown" for f in ["Year", "Game Id", "Time to Beat", "Score"])
-            needs_genre = game["Genre"] == "Unknown"
-
-            if not needs_hltb and not needs_genre:
-                return # Row is already complete
-
-            # 2. Parallel API Calls
-            hltb_task = self.hltb.async_search(name) if needs_hltb else asyncio.sleep(0, None)
-            genre_task = self.fetch_genre(name, plat) if needs_genre else asyncio.sleep(0, game["Genre"])
+        # 2. Process in batches
+        for i in range(0, len(remaining_games), Config.GENRE_BATCH_SIZE):
+            batch = remaining_games[i : i + Config.GENRE_BATCH_SIZE]
+            batch_str = "\n".join([f"- {g['Game']} ({g['Platform']})" for g in batch])
             
             try:
-                hltb_results, genre = await asyncio.gather(hltb_task, genre_task)
+                print(f"Token optimization: Fetching genres for a batch of {len(batch)} games...")
+                completion = await self.openai.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": f"""
+You are a video game database expert. Classify each game in the list into ONE genre from: {', '.join(Config.GENRES_ALLOWED)}.
+Return exactly one line per game in the format 'Game Name: Genre'. 
+If you don't know, use 'Unknown'. No filler text.
+                        """},
+                        {"role": "user", "content": f"Classify these games:\n{batch_str}"}
+                    ]
+                )
                 
-                # Update genre regardless of HLTB result if needed
-                if needs_genre:
-                    game["Genre"] = genre
+                responses = completion.choices[0].message.content.strip().split("\n")
+                
+                # Simple parsing to match response back to games
+                for line in responses:
+                    if ":" in line:
+                        parts = line.split(":", 1)
+                        # Remove marker "-" if present
+                        game_ref = parts[0].strip().lstrip("- ").lower()
+                        genre_result = parts[1].strip()
+                        if genre_result in Config.GENRES_ALLOWED:
+                            self.genre_cache[game_ref] = genre_result
 
-                # Update HLTB data if found and similar enough
-                if needs_hltb and hltb_results:
-                    best = max(hltb_results, key=lambda x: x.similarity)
+                # Apply results to batch
+                for g in batch:
+                    key = g["Game"].lower().strip()
+                    g["Genre"] = self.genre_cache.get(key, "Unknown")
+
+            except Exception as e:
+                print(f"Batch Processing Error: {e}")
+
+    async def process_hltb_only(self, game: Dict, index: int, total: int):
+        """Processes HLTB data for a single game instance."""
+        async with self.semaphore:
+            name = game["Game"]
+            
+            # Check if we really need HLTB (other fields besides Genre)
+            needs_hltb = any(game[f] == "Unknown" for f in ["Year", "Game Id", "Time to Beat", "Score"])
+
+            if not needs_hltb:
+                return
+
+            try:
+                results = await self.hltb.async_search(name)
+                if results:
+                    best = max(results, key=lambda x: x.similarity)
                     if best.similarity >= Config.SIMILARITY_THRESHOLD:
                         game["Score"] = normalize_field(best.review_score)
                         game["Year"] = normalize_field(best.release_world)
                         game["Game Id"] = normalize_field(best.game_id)
                         game["Time to Beat"] = round_to_quarter(best.main_story)
-                        print(f"[{index}/{total}] {name}: Updated (Sim: {best.similarity:.2f})")
-                        return
-                    
-                status_msg = "Genre updated" if needs_genre else "Skipped (Low similarity or not found)"
-                print(f"[{index}/{total}] {name}: {status_msg}")
-
+                        print(f"[{index}/{total}] {name}: HLTB Data Updated (Sim: {best.similarity:.2f})")
+                    else:
+                        print(f"[{index}/{total}] {name}: Low HLTB Similarity ({best.similarity:.2f})")
+                else:
+                    print(f"[{index}/{total}] {name}: Not found on HLTB")
             except Exception as e:
-                print(f"[{index}/{total}] Error refining {name}: {e}")
+                print(f"[{index}/{total}] {name}: HLTB Error: {e}")
 
 # --- DATA HANDLING ---
 
@@ -129,7 +144,6 @@ def deduplicate_games(games: List[Dict]) -> List[Dict]:
     unique_list = []
     
     for game in games:
-        # Create a unique normalized key
         name = normalize_field(game.get("Game")).lower()
         plat = normalize_field(game.get("Platform")).lower()
         key = (name, plat)
@@ -145,55 +159,60 @@ def deduplicate_games(games: List[Dict]) -> List[Dict]:
     return unique_list
 
 async def main():
-    """Main execution flow."""
+    """Main execution flow optimized for cost and performance."""
     enricher = GameEnricher()
     
-    # 1. Load Data
+    # 1. Load and Clean Data
     all_games = []
     try:
         with open(Config.INPUT_CSV, mode='r', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            all_games = deduplicate_games(list(reader))
+            all_games = deduplicate_games(list(csv.DictReader(f)))
     except FileNotFoundError:
         print(f"Critical Error: File '{Config.INPUT_CSV}' not found.")
         return
 
-    # 2. Identify games needing updates
-    games_needing_update = [
-        game for game in all_games if any(
-            normalize_field(game.get(f)) == "Unknown" 
-            for f in ["Year", "Genre", "Game Id", "Time to Beat", "Score"]
+    # 2. Normalize and Round existing data
+    for game in all_games:
+        for field in ["Year", "Genre", "Game Id", "Time to Beat", "Score", "Platform"]:
+            game[field] = normalize_field(game.get(field))
+        game["Time to Beat"] = round_to_quarter(game["Time to Beat"])
+
+    # 3. Filter games needing any update
+    to_process = [
+        g for g in all_games if any(
+            g[f] == "Unknown" for f in ["Year", "Genre", "Game Id", "Time to Beat", "Score"]
         )
     ]
 
-    # 3. Apply processing limit
-    if Config.MAX_GAMES_TO_PROCESS is not None:
-        process_queue = games_needing_update[:Config.MAX_GAMES_TO_PROCESS]
-    else:
-        process_queue = games_needing_update
+    # 4. Limit the work queue
+    queue = to_process[:Config.MAX_GAMES_TO_PROCESS] if Config.MAX_GAMES_TO_PROCESS else to_process
     
-    total_to_process = len(process_queue)
-    if total_to_process == 0:
-        print("Verification: All processed games are up to date.")
+    if not queue:
+        print("Verification: All games are up to date.")
         return
 
-    print(f"Status: Found {len(all_games)} games. Processing {total_to_process} items...")
+    print(f"Status: Processing {len(queue)} games...")
 
-    # 4. Execute enrichment tasks concurrently
+    # 5. STEP ONE: Fetch Genres in Batch (Saves a lot of tokens)
+    needing_genre = [g for g in queue if g["Genre"] == "Unknown"]
+    if needing_genre:
+        await enricher.fetch_genres_batch(needing_genre)
+
+    # 6. STEP TWO: Fetch HLTB data concurrently
     tasks = [
-        enricher.process_single_game(game, i, total_to_process) 
-        for i, game in enumerate(process_queue, start=1)
+        enricher.process_hltb_only(game, i, len(queue)) 
+        for i, game in enumerate(queue, start=1)
     ]
     await asyncio.gather(*tasks)
 
-    # 5. Save results
+    # 7. Save results
     fieldnames = ["Game", "Platform", "Year", "Genre", "Game Id", "Time to Beat", "Score", "Status"]
     try:
         with open(Config.OUTPUT_CSV, mode='w', newline='', encoding='utf-8') as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()
             writer.writerows(all_games)
-        print(f"\nSuccess: '{Config.OUTPUT_CSV}' has been updated.")
+        print(f"\nSuccess: '{Config.OUTPUT_CSV}' updated. {len(queue)} games processed.")
     except IOError as e:
         print(f"\nError: Failed to save file. {e}")
 
