@@ -16,6 +16,7 @@ class Config:
     INPUT_CSV = "games.csv"
     OUTPUT_CSV = INPUT_CSV if OVERWRITE_INPUT else "games_updated.csv"
     CACHE_FILE = "game_data_cache.json"
+    CSV_DELIMITER = None  # None = auto-detect from the file; set ';' or ',' to force one
     MAX_GAMES_TO_PROCESS = 300
     MAX_CONCURRENT_GAMES = 5
     GENRE_BATCH_SIZE = 20  # Number of games to send to LLM in one request
@@ -32,14 +33,24 @@ class Config:
 
 # --- UTILITIES ---
 
-def round_to_quarter(value: Optional[str]) -> str:
+def detect_delimiter(file_path: str, fallback: str = ",") -> str:
+    """Sniffs the CSV delimiter (supports comma, semicolon, tab, pipe) from the header line."""
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            sample = f.readline()
+        return csv.Sniffer().sniff(sample, delimiters=",;\t|").delimiter
+    except Exception:
+        return fallback
+
+def round_to_quarter(value: Optional[str], decimal_sep: str = ".") -> str:
     """Rounds a time value to the nearest 0.25 increment."""
     if not value or value in ["Unknown", "None", ""]:
         return "Unknown"
     try:
-        time_val = float(value)
+        time_val = float(str(value).replace(",", "."))
         rounded = round(time_val * 4) / 4
-        return f"{rounded:.2f}"
+        formatted = f"{rounded:.2f}"
+        return formatted.replace(".", decimal_sep) if decimal_sep != "." else formatted
     except ValueError:
         return "Unknown"
 
@@ -252,11 +263,15 @@ async def main():
     """Main execution flow optimized for cost and performance."""
     enricher = GameEnricher()
     
-    # 1. Load and Clean Data
+    # 1. Detect CSV format and load data
+    delimiter = Config.CSV_DELIMITER or detect_delimiter(Config.INPUT_CSV)
+    decimal_sep = "," if delimiter == ";" else "."
+    print(f"CSV format detected: delimiter='{delimiter}', decimal separator='{decimal_sep}'")
+
     all_games = []
     try:
         with open(Config.INPUT_CSV, mode='r', encoding='utf-8') as f:
-            all_games = deduplicate_games(list(csv.DictReader(f)))
+            all_games = deduplicate_games(list(csv.DictReader(f, delimiter=delimiter)))
     except FileNotFoundError:
         print(f"Critical Error: File '{Config.INPUT_CSV}' not found.")
         return
@@ -292,7 +307,7 @@ async def main():
     for game in queue:
         for field in ["Year", "Genre", "Game Id", "Time to Beat", "Score", "Platform"]:
             game[field] = normalize_field(game.get(field))
-        game["Time to Beat"] = round_to_quarter(game["Time to Beat"])
+        game["Time to Beat"] = round_to_quarter(game["Time to Beat"], decimal_sep)
 
     # 7. Print OpenAI Usage Summary
     print(enricher.get_cost_summary())
@@ -301,7 +316,7 @@ async def main():
     fieldnames = ["Game", "Platform", "Year", "Genre", "Game Id", "Time to Beat", "Score", "Status"]
     try:
         with open(Config.OUTPUT_CSV, mode='w', newline='', encoding='utf-8') as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer = csv.DictWriter(f, fieldnames=fieldnames, delimiter=delimiter)
             writer.writeheader()
             writer.writerows(all_games)
         print(f"\nSuccess: '{Config.OUTPUT_CSV}' updated. {len(queue)} games processed.")
