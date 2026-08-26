@@ -18,8 +18,10 @@ class Config:
     CACHE_FILE = "game_data_cache.json"
     CSV_DELIMITER = None  # None = auto-detect from the file; set ';' or ',' to force one
     MAX_GAMES_TO_PROCESS = 300
-    MAX_CONCURRENT_GAMES = 5
+    MAX_CONCURRENT_GAMES = 10
     GENRE_BATCH_SIZE = 20  # Number of games to send to LLM in one request
+    GENRE_CONCURRENT_BATCHES = 4  # How many genre batches to send to OpenAI in parallel
+    CACHE_SAVE_INTERVAL = 10  # Flush the cache to disk every N HLTB updates (always flushed at the end too)
     SIMILARITY_THRESHOLD = 0.85
     # gpt-4o-mini pricing per 1M tokens (as of early 2024)
     PRICE_PROMPT_1M = 0.15
@@ -72,6 +74,7 @@ class GameEnricher:
         self.total_prompt_tokens = 0
         self.total_completion_tokens = 0
         self.game_cache: Dict[str, Dict[str, str]] = self._load_cache()
+        self._updates_since_save = 0
 
     def _load_cache(self) -> Dict[str, Dict[str, str]]:
         """Loads the game data cache from a local JSON file."""
@@ -123,11 +126,19 @@ class GameEnricher:
         if not remaining_games:
             return
 
-        # 2. Process in batches
-        for i in range(0, len(remaining_games), Config.GENRE_BATCH_SIZE):
-            batch = remaining_games[i : i + Config.GENRE_BATCH_SIZE]
-            batch_str = "\n".join([f"- {g['Game']} ({g['Platform']})" for g in batch])
-            
+        # 2. Process batches concurrently (bounded), each batch is independent
+        batches = [
+            remaining_games[i : i + Config.GENRE_BATCH_SIZE]
+            for i in range(0, len(remaining_games), Config.GENRE_BATCH_SIZE)
+        ]
+        genre_semaphore = asyncio.Semaphore(Config.GENRE_CONCURRENT_BATCHES)
+        await asyncio.gather(*[self._process_genre_batch(batch, genre_semaphore) for batch in batches])
+        # Single flush after all batches complete (results already applied in-memory per batch)
+        self._save_cache()
+
+    async def _process_genre_batch(self, batch: List[Dict], semaphore: asyncio.Semaphore):
+        """Classifies genres for a single batch of games via the OpenAI API."""
+        async with semaphore:
             try:
                 print(f"Token optimization: Fetching genres for a batch of {len(batch)} games...")
                 completion = await self.openai.chat.completions.create(
@@ -142,10 +153,10 @@ Example: {{"Game Name": "Action", "Another Game": "RPG"}}
                         {"role": "user", "content": f"Classify these games: {', '.join([g['Game'] for g in batch])}"}
                     ]
                 )
-                
+
                 # Parse JSON response
                 result_json = json.loads(completion.choices[0].message.content)
-                
+
                 # Track usage
                 if completion.usage:
                     self.total_prompt_tokens += completion.usage.prompt_tokens
@@ -164,9 +175,6 @@ Example: {{"Game Name": "Action", "Another Game": "RPG"}}
                     key = g["Game"].lower().strip()
                     if key in self.game_cache and self.game_cache[key].get("Genre"):
                         g["Genre"] = self.game_cache[key]["Genre"]
-
-                # Save cache after each successful batch
-                self._save_cache()
 
             except Exception as e:
                 print(f"Batch Processing Error: {e}")
@@ -229,8 +237,13 @@ Example: {{"Game Name": "Action", "Another Game": "RPG"}}
                             "Game Id": gid,
                             "Time to Beat": ttb
                         })
-                        self._save_cache()
-                        
+                        # Flush to disk periodically instead of on every single game
+                        # (avoids blocking the event loop with a full cache rewrite each time)
+                        self._updates_since_save += 1
+                        if self._updates_since_save >= Config.CACHE_SAVE_INTERVAL:
+                            self._save_cache()
+                            self._updates_since_save = 0
+
                         print(f"[{index}/{total}] {name}: HLTB Data Updated (Sim: {best.similarity:.2f})")
                 else:
                     print(f"[{index}/{total}] {name}: Not found on HLTB")
@@ -302,6 +315,7 @@ async def main():
         for i, game in enumerate(queue, start=1)
     ]
     await asyncio.gather(*tasks)
+    enricher._save_cache()  # Final flush to guarantee any batched-but-unsaved updates hit disk
 
     # 6. Post-process the queue: Normalize remaining empties and round times
     for game in queue:
